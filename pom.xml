@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.nexus.plugins</groupId>
+        <artifactId>nexus-plugins</artifactId>
+        <version>3.30.0-01</version>
+    </parent>
+
+    <artifactId>nexus-repository-dart</artifactId>
+    <packaging>bundle</packaging>
+    <inceptionYear>2021</inceptionYear>
+    <licenses>
+        <license></license>
+    </licenses>
+    <organization>
+        <name>EDF</name>
+        <url>https://github.com/groupe-edf</url>
+    </organization>
+    <developers>
+        <developer>
+            <id>mat1e</id>
+            <name>Mathieu Delrocq</name>
+            <email>delrocq.mathieu@gmail.com</email>
+        </developer>
+    </developers>
+    <contributors>
+        <contributor>
+            <name>Olivier Routier</name>
+            <email>olivier-o.routier@edf.fr</email>
+            <organization>EDF</organization>
+            <organizationUrl>https://github.com/groupe-edf</organizationUrl>
+            <roles>
+                <role>Product Owner</role>
+            </roles>
+        </contributor>
+    </contributors>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.sonatype.nexus</groupId>
+            <artifactId>nexus-plugin-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.nexus</groupId>
+            <artifactId>nexus-repository</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.nexus</groupId>
+            <artifactId>nexus-testsupport</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.nexus</groupId>
+            <artifactId>nexus-rapture</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.sonatype.nexus.buildsupport</groupId>
+                <artifactId>extjs-maven-plugin</artifactId>
+                <configuration>
+                    <namespace>NX.composer</namespace>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20</version>
+                <configuration>
+                    <useSystemClassLoader>false</useSystemClassLoader>
+                </configuration>
+            </plugin>
+            <!-- during 'verify' phase, ensure the new repository format 
+                plugin is installed locally, for use by ITs. -->
+            <plugin>
+                <artifactId>maven-install-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>install</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
