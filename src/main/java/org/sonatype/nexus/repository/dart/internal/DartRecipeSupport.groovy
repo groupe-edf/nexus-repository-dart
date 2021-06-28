@@ -26,135 +26,63 @@ import org.sonatype.nexus.repository.storage.SingleAssetComponentMaintenance
 import org.sonatype.nexus.repository.storage.StorageFacet
 import org.sonatype.nexus.repository.storage.UnitOfWorkHandler
 import org.sonatype.nexus.repository.view.ConfigurableViewFacet
-import org.sonatype.nexus.repository.view.Context
-import org.sonatype.nexus.repository.view.Route.Builder
 import org.sonatype.nexus.repository.view.handlers.ConditionalRequestHandler
 import org.sonatype.nexus.repository.view.handlers.ContentHeadersHandler
 import org.sonatype.nexus.repository.view.handlers.ExceptionHandler
 import org.sonatype.nexus.repository.view.handlers.HandlerContributor
 import org.sonatype.nexus.repository.view.handlers.TimingHandler
-import org.sonatype.nexus.repository.view.matchers.ActionMatcher
-import org.sonatype.nexus.repository.view.matchers.LiteralMatcher
-import org.sonatype.nexus.repository.view.matchers.logic.LogicMatchers
-import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher
-
-import static org.sonatype.nexus.repository.http.HttpMethods.GET
-import static org.sonatype.nexus.repository.http.HttpMethods.HEAD
-import static org.sonatype.nexus.repository.http.HttpMethods.PUT
 
 /**
  * Abstract superclass containing methods and constants common to most Dart repository recipes.
  */
-abstract class DartRecipeSupport
-    extends RecipeSupport
-{
-  public static final String VENDOR_TOKEN = 'vendor'
+abstract class DartRecipeSupport extends RecipeSupport {
 
-  public static final String PROJECT_TOKEN = 'project'
+    @Inject
+    Provider<DartContentFacet> contentFacet
 
-  public static final String VERSION_TOKEN = 'version'
+    @Inject
+    Provider<DartSecurityFacet> securityFacet
 
-  public static final String NAME_TOKEN = 'name'
+    @Inject
+    Provider<ConfigurableViewFacet> viewFacet
 
-  public static final String PACKAGE_FIELD_NAME = "package";
+    @Inject
+    Provider<StorageFacet> storageFacet
 
-  public static final String SOURCE_TYPE_FIELD_NAME = 'src-type';
+    @Inject
+    Provider<SearchFacet> searchFacet
 
-  public static final String SOURCE_URL_FIELD_NAME = 'src-url';
+    @Inject
+    Provider<AttributesFacet> attributesFacet
 
-  public static final String SOURCE_REFERENCE_FIELD_NAME = 'src-ref';
+    @Inject
+    Provider<SingleAssetComponentMaintenance> componentMaintenanceFacet
 
-  @Inject
-  Provider<ComposerContentFacet> contentFacet
+    @Inject
+    ExceptionHandler exceptionHandler
 
-  @Inject
-  Provider<ComposerSecurityFacet> securityFacet
+    @Inject
+    TimingHandler timingHandler
 
-  @Inject
-  Provider<ConfigurableViewFacet> viewFacet
+    @Inject
+    SecurityHandler securityHandler
 
-  @Inject
-  Provider<StorageFacet> storageFacet
+    @Inject
+    PartialFetchHandler partialFetchHandler
 
-  @Inject
-  Provider<SearchFacet> searchFacet
+    @Inject
+    ConditionalRequestHandler conditionalRequestHandler
 
-  @Inject
-  Provider<AttributesFacet> attributesFacet
+    @Inject
+    ContentHeadersHandler contentHeadersHandler
 
-  @Inject
-  Provider<SingleAssetComponentMaintenance> componentMaintenanceFacet
+    @Inject
+    UnitOfWorkHandler unitOfWorkHandler
 
-  @Inject
-  ExceptionHandler exceptionHandler
+    @Inject
+    HandlerContributor handlerContributor
 
-  @Inject
-  TimingHandler timingHandler
-
-  @Inject
-  SecurityHandler securityHandler
-
-  @Inject
-  PartialFetchHandler partialFetchHandler
-
-  @Inject
-  ConditionalRequestHandler conditionalRequestHandler
-
-  @Inject
-  ContentHeadersHandler contentHeadersHandler
-
-  @Inject
-  UnitOfWorkHandler unitOfWorkHandler
-
-  @Inject
-  HandlerContributor handlerContributor
-
-  protected DartRecipeSupport(final Type type, final Format format) {
-    super(type, format)
-  }
-
-  Closure assetKindHandler = { Context context, AssetKind value ->
-    context.attributes.set(AssetKind, value)
-    return context.proceed()
-  }
-
-  static Builder packagesMatcher() {
-    new Builder().matcher(
-        LogicMatchers.and(
-            new ActionMatcher(GET, HEAD),
-            new LiteralMatcher('/packages.json')
-        ))
-  }
-
-  static Builder listMatcher() {
-    new Builder().matcher(
-        LogicMatchers.and(
-            new ActionMatcher(GET, HEAD),
-            new LiteralMatcher('/packages/list.json')
-        ))
-  }
-
-  static Builder providerMatcher() {
-    new Builder().matcher(
-        LogicMatchers.and(
-            new ActionMatcher(GET, HEAD),
-            new TokenMatcher('/p/{vendor:.+}/{project:.+}.json')
-        ))
-  }
-
-  static Builder zipballMatcher() {
-    new Builder().matcher(
-        LogicMatchers.and(
-            new ActionMatcher(GET, HEAD),
-            new TokenMatcher('/{vendor:.+}/{project:.+}/{version:.+}/{name:.+}.zip')
-        ))
-  }
-
-  static Builder uploadMatcher() {
-    new Builder().matcher(
-        LogicMatchers.and(
-            new ActionMatcher(PUT),
-            new TokenMatcher('/packages/upload/{vendor:.+}/{project:.+}/{version:.+}')
-        ))
-  }
+    protected DartRecipeSupport(final Type type, final Format format) {
+        super(type, format)
+    }
 }

@@ -37,118 +37,117 @@ import org.sonatype.nexus.repository.view.ViewFacet
  */
 @Named(DartProxyRecipe.NAME)
 @Singleton
-class DartProxyRecipe
-    extends DartRecipeSupport
-{
-  public static final String NAME = 'composer-proxy'
+class DartProxyRecipe extends DartRecipeSupport {
 
-  @Inject
-  Provider<DartProxyFacetImpl> proxyFacet
+    public static final String NAME = 'composer-proxy'
 
-  @Inject
-  Provider<NegativeCacheFacet> negativeCacheFacet
+    @Inject
+    Provider<DartProxyFacetImpl> proxyFacet
 
-  @Inject
-  Provider<PurgeUnusedFacet> purgeUnusedFacet
+    @Inject
+    Provider<NegativeCacheFacet> negativeCacheFacet
 
-  @Inject
-  NegativeCacheHandler negativeCacheHandler
+    @Inject
+    Provider<PurgeUnusedFacet> purgeUnusedFacet
 
-  @Inject
-  ProxyHandler proxyHandler
+    @Inject
+    NegativeCacheHandler negativeCacheHandler
 
-  @Inject
-  Provider<HttpClientFacet> httpClientFacet
+    @Inject
+    ProxyHandler proxyHandler
 
-  @Inject
-  DartProviderHandler composerProviderHandler
+    @Inject
+    Provider<HttpClientFacet> httpClientFacet
 
-  @Inject
-  DartProxyRecipe(@Named(ProxyType.NAME) final Type type, @Named(DartFormat.NAME) final Format format) {
-    super(type, format)
-  }
+    @Inject
+    DartProviderHandler composerProviderHandler
 
-  @Override
-  void apply(@Nonnull final Repository repository) throws Exception {
-    repository.attach(contentFacet.get())
-    repository.attach(securityFacet.get())
-    repository.attach(configure(viewFacet.get()))
-    repository.attach(httpClientFacet.get())
-    repository.attach(negativeCacheFacet.get())
-    repository.attach(proxyFacet.get())
-    repository.attach(storageFacet.get())
-    repository.attach(componentMaintenanceFacet.get())
-    repository.attach(searchFacet.get())
-    repository.attach(attributesFacet.get())
-    repository.attach(purgeUnusedFacet.get())
-  }
+    @Inject
+    DartProxyRecipe(@Named(ProxyType.NAME) final Type type, @Named(DartFormat.NAME) final Format format) {
+        super(type, format)
+    }
 
-  private ViewFacet configure(final ConfigurableViewFacet facet) {
-    Router.Builder builder = new Router.Builder()
+    @Override
+    void apply(@Nonnull final Repository repository) throws Exception {
+        repository.attach(contentFacet.get())
+        repository.attach(securityFacet.get())
+        repository.attach(configure(viewFacet.get()))
+        repository.attach(httpClientFacet.get())
+        repository.attach(negativeCacheFacet.get())
+        repository.attach(proxyFacet.get())
+        repository.attach(storageFacet.get())
+        repository.attach(componentMaintenanceFacet.get())
+        repository.attach(searchFacet.get())
+        repository.attach(attributesFacet.get())
+        repository.attach(purgeUnusedFacet.get())
+    }
 
-    builder.route(packagesMatcher()
-        .handler(timingHandler)
-        .handler(assetKindHandler.rcurry(AssetKind.PACKAGES))
-        .handler(securityHandler)
-        .handler(exceptionHandler)
-        .handler(handlerContributor)
-        .handler(negativeCacheHandler)
-        .handler(conditionalRequestHandler)
-        .handler(partialFetchHandler)
-        .handler(contentHeadersHandler)
-        .handler(unitOfWorkHandler)
-        .handler(proxyHandler)
-        .create())
+    private ViewFacet configure(final ConfigurableViewFacet facet) {
+        Router.Builder builder = new Router.Builder()
 
-    builder.route(listMatcher()
-        .handler(timingHandler)
-        .handler(assetKindHandler.rcurry(AssetKind.LIST))
-        .handler(securityHandler)
-        .handler(exceptionHandler)
-        .handler(handlerContributor)
-        .handler(negativeCacheHandler)
-        .handler(conditionalRequestHandler)
-        .handler(partialFetchHandler)
-        .handler(contentHeadersHandler)
-        .handler(unitOfWorkHandler)
-        .handler(proxyHandler)
-        .create())
+        builder.route(packagesMatcher()
+                .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.PACKAGES))
+                .handler(securityHandler)
+                .handler(exceptionHandler)
+                .handler(handlerContributor)
+                .handler(negativeCacheHandler)
+                .handler(conditionalRequestHandler)
+                .handler(partialFetchHandler)
+                .handler(contentHeadersHandler)
+                .handler(unitOfWorkHandler)
+                .handler(proxyHandler)
+                .create())
 
-    builder.route(providerMatcher()
-        .handler(timingHandler)
-        .handler(assetKindHandler.rcurry(AssetKind.PROVIDER))
-        .handler(securityHandler)
-        .handler(exceptionHandler)
-        .handler(handlerContributor)
-        .handler(negativeCacheHandler)
-        .handler(conditionalRequestHandler)
-        .handler(partialFetchHandler)
-        .handler(contentHeadersHandler)
-        .handler(composerProviderHandler)
-        .handler(unitOfWorkHandler)
-        .handler(proxyHandler)
-        .create())
+        builder.route(listMatcher()
+                .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.LIST))
+                .handler(securityHandler)
+                .handler(exceptionHandler)
+                .handler(handlerContributor)
+                .handler(negativeCacheHandler)
+                .handler(conditionalRequestHandler)
+                .handler(partialFetchHandler)
+                .handler(contentHeadersHandler)
+                .handler(unitOfWorkHandler)
+                .handler(proxyHandler)
+                .create())
 
-    builder.route(zipballMatcher()
-        .handler(timingHandler)
-        .handler(assetKindHandler.rcurry(AssetKind.ZIPBALL))
-        .handler(securityHandler)
-        .handler(exceptionHandler)
-        .handler(handlerContributor)
-        .handler(negativeCacheHandler)
-        .handler(conditionalRequestHandler)
-        .handler(partialFetchHandler)
-        .handler(contentHeadersHandler)
-        .handler(unitOfWorkHandler)
-        .handler(proxyHandler)
-        .create())
+        builder.route(providerMatcher()
+                .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.PROVIDER))
+                .handler(securityHandler)
+                .handler(exceptionHandler)
+                .handler(handlerContributor)
+                .handler(negativeCacheHandler)
+                .handler(conditionalRequestHandler)
+                .handler(partialFetchHandler)
+                .handler(contentHeadersHandler)
+                .handler(composerProviderHandler)
+                .handler(unitOfWorkHandler)
+                .handler(proxyHandler)
+                .create())
 
-    addBrowseUnsupportedRoute(builder)
+        builder.route(zipballMatcher()
+                .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.ZIPBALL))
+                .handler(securityHandler)
+                .handler(exceptionHandler)
+                .handler(handlerContributor)
+                .handler(negativeCacheHandler)
+                .handler(conditionalRequestHandler)
+                .handler(partialFetchHandler)
+                .handler(contentHeadersHandler)
+                .handler(unitOfWorkHandler)
+                .handler(proxyHandler)
+                .create())
 
-    builder.defaultHandlers(HttpHandlers.notFound())
+        addBrowseUnsupportedRoute(builder)
 
-    facet.configure(builder.create())
+        builder.defaultHandlers(HttpHandlers.notFound())
 
-    return facet
-  }
+        facet.configure(builder.create())
+
+        return facet
+    }
 }
