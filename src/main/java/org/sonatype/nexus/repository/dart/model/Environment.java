@@ -1,20 +1,33 @@
 package org.sonatype.nexus.repository.dart.model;
 
-import java.util.HashMap;
-import java.util.Map;
-import javax.annotation.Generated;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@Generated("jsonschema2pojo")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonPropertyOrder({ "sdk", "flutter" })
 public class Environment {
 
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    @JsonProperty("sdk")
+    private String sdk;
 
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
+    @JsonProperty("flutter")
+    private String flutter;
+
+    public String getSdk() {
+        return sdk;
     }
 
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
+    public void setSdk(String sdk) {
+        this.sdk = sdk;
+    }
+
+    public String getFlutter() {
+        return flutter;
+    }
+
+    public void setFlutter(String flutter) {
+        this.flutter = flutter;
     }
 
 }
