@@ -29,19 +29,20 @@ import org.sonatype.nexus.blobstore.api.Blob;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 /**
- * Utility class for extracting the contents of a package's
- * {@code composer.json} file and returning it as a map.
+ * Utility class for extracting the contents of a package's {@code pubspec.yaml}
+ * file and returning it as a map.
  */
 @Named
 @Singleton
-public class DartJsonExtractor extends ComponentSupport {
+public class PubspecExtractor extends ComponentSupport {
 
     private final TypeReference<Map<String, Object>> typeReference = new TypeReference<Map<String, Object>>() {
     };
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
     private final ArchiveStreamFactory archiveStreamFactory = new ArchiveStreamFactory();
 
@@ -50,9 +51,9 @@ public class DartJsonExtractor extends ComponentSupport {
      * which there should only be one) as a map representing the parsed JSON
      * content. If no such file is found then an empty map is returned.
      */
-    public Map<String, Object> extractFromZip(final Blob blob) throws IOException {
+    public Map<String, Object> extractFromTar(final Blob blob) throws IOException {
         try (InputStream is = blob.getInputStream()) {
-            try (ArchiveInputStream ais = archiveStreamFactory.createArchiveInputStream(ArchiveStreamFactory.ZIP, is)) {
+            try (ArchiveInputStream ais = archiveStreamFactory.createArchiveInputStream(ArchiveStreamFactory.TAR, is)) {
                 ArchiveEntry entry = ais.getNextEntry();
                 while (entry != null) {
                     Map<String, Object> contents = processEntry(ais, entry);
@@ -74,7 +75,7 @@ public class DartJsonExtractor extends ComponentSupport {
      */
     private Map<String, Object> processEntry(final ArchiveInputStream stream, final ArchiveEntry entry)
             throws IOException {
-        if (isComposerJsonFilename(entry.getName())) {
+        if (isPubspecFilename(entry.getName())) {
             return mapper.readValue(stream, typeReference);
         }
         return Collections.emptyMap();
@@ -85,9 +86,9 @@ public class DartJsonExtractor extends ComponentSupport {
      * file) represents the {@code
      * composer.json} file.
      */
-    private boolean isComposerJsonFilename(final String entryName) {
-        int filenameIndex = entryName.indexOf("/composer.json");
+    private boolean isPubspecFilename(final String entryName) {
+        int filenameIndex = entryName.indexOf("/pubspec.yaml");
         int separatorIndex = entryName.indexOf("/");
-        return entryName.equals("composer.json") || (filenameIndex >= 0 && filenameIndex == separatorIndex);
+        return entryName.equals("pubspec.yaml") || (filenameIndex >= 0 && filenameIndex == separatorIndex);
     }
 }

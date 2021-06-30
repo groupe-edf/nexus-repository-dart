@@ -23,13 +23,11 @@ import org.sonatype.nexus.repository.security.VariableResolverAdapter;
  * Dart format security facet.
  */
 @Named
-public class DartSecurityFacet extends SecurityFacetSupport
-{
-  @Inject
-  public DartSecurityFacet(final DartFormatSecurityContributor securityContributor,
-                            @Named("simple") final VariableResolverAdapter variableResolverAdapter,
-                            final ContentPermissionChecker contentPermissionChecker)
-  {
-    super(securityContributor, variableResolverAdapter, contentPermissionChecker);
-  }
+public class DartSecurityFacet extends SecurityFacetSupport {
+    @Inject
+    public DartSecurityFacet(final DartFormatSecurityContributor securityContributor,
+            @Named("simple") final VariableResolverAdapter variableResolverAdapter,
+            final ContentPermissionChecker contentPermissionChecker) {
+        super(securityContributor, variableResolverAdapter, contentPermissionChecker);
+    }
 }

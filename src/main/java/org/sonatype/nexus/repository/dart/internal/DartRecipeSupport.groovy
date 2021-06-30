@@ -19,6 +19,7 @@ import org.sonatype.nexus.repository.Format
 import org.sonatype.nexus.repository.RecipeSupport
 import org.sonatype.nexus.repository.Type
 import org.sonatype.nexus.repository.attributes.AttributesFacet
+import org.sonatype.nexus.repository.http.HttpMethods
 import org.sonatype.nexus.repository.http.PartialFetchHandler
 import org.sonatype.nexus.repository.search.SearchFacet
 import org.sonatype.nexus.repository.security.SecurityHandler
@@ -26,11 +27,16 @@ import org.sonatype.nexus.repository.storage.SingleAssetComponentMaintenance
 import org.sonatype.nexus.repository.storage.StorageFacet
 import org.sonatype.nexus.repository.storage.UnitOfWorkHandler
 import org.sonatype.nexus.repository.view.ConfigurableViewFacet
+import org.sonatype.nexus.repository.view.Route.Builder
 import org.sonatype.nexus.repository.view.handlers.ConditionalRequestHandler
 import org.sonatype.nexus.repository.view.handlers.ContentHeadersHandler
 import org.sonatype.nexus.repository.view.handlers.ExceptionHandler
 import org.sonatype.nexus.repository.view.handlers.HandlerContributor
 import org.sonatype.nexus.repository.view.handlers.TimingHandler
+import org.sonatype.nexus.repository.view.matchers.ActionMatcher
+import org.sonatype.nexus.repository.view.matchers.LiteralMatcher
+import org.sonatype.nexus.repository.view.matchers.logic.LogicMatchers
+import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher
 
 /**
  * Abstract superclass containing methods and constants common to most Dart repository recipes.
@@ -84,5 +90,37 @@ abstract class DartRecipeSupport extends RecipeSupport {
 
     protected DartRecipeSupport(final Type type, final Format format) {
         super(type, format)
+    }
+
+    static Builder packagesMatcher() {
+        new Builder().matcher(
+                LogicMatchers.and(
+                new ActionMatcher(HttpMethods.GET, HttpMethods.HEAD),
+                new LiteralMatcher('/packages')
+                ))
+    }
+
+    static Builder packageMatcher() {
+        new Builder().matcher(
+                LogicMatchers.and(
+                new ActionMatcher(HttpMethods.GET, HttpMethods.HEAD),
+                new TokenMatcher('/packages/{package:.+}')
+                ))
+    }
+
+    static Builder versionMatcher() {
+        new Builder().matcher(
+                LogicMatchers.and(
+                new ActionMatcher(HttpMethods.PUT),
+                new TokenMatcher('/packages/{package:.+}/versions/{version:.+}')
+                ))
+    }
+
+    static Builder archiveMatcher() {
+        new Builder().matcher(
+                LogicMatchers.and(
+                new ActionMatcher(HttpMethods.PUT),
+                new TokenMatcher('/packages/{package:.+}/versions/{version:.+}.tar.gz')
+                ))
     }
 }

@@ -39,7 +39,7 @@ import org.sonatype.nexus.repository.view.ViewFacet
 @Singleton
 class DartProxyRecipe extends DartRecipeSupport {
 
-    public static final String NAME = 'composer-proxy'
+    public static final String NAME = 'dart-proxy'
 
     @Inject
     Provider<DartProxyFacetImpl> proxyFacet
@@ -60,7 +60,7 @@ class DartProxyRecipe extends DartRecipeSupport {
     Provider<HttpClientFacet> httpClientFacet
 
     @Inject
-    DartProviderHandler composerProviderHandler
+    DartProviderHandler dartProviderHandler
 
     @Inject
     DartProxyRecipe(@Named(ProxyType.NAME) final Type type, @Named(DartFormat.NAME) final Format format) {
@@ -87,7 +87,6 @@ class DartProxyRecipe extends DartRecipeSupport {
 
         builder.route(packagesMatcher()
                 .handler(timingHandler)
-                .handler(assetKindHandler.rcurry(AssetKind.PACKAGES))
                 .handler(securityHandler)
                 .handler(exceptionHandler)
                 .handler(handlerContributor)
@@ -99,9 +98,8 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(proxyHandler)
                 .create())
 
-        builder.route(listMatcher()
+        builder.route(packageMatcher()
                 .handler(timingHandler)
-                .handler(assetKindHandler.rcurry(AssetKind.LIST))
                 .handler(securityHandler)
                 .handler(exceptionHandler)
                 .handler(handlerContributor)
@@ -113,9 +111,8 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(proxyHandler)
                 .create())
 
-        builder.route(providerMatcher()
+        builder.route(versionMatcher()
                 .handler(timingHandler)
-                .handler(assetKindHandler.rcurry(AssetKind.PROVIDER))
                 .handler(securityHandler)
                 .handler(exceptionHandler)
                 .handler(handlerContributor)
@@ -123,14 +120,13 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(conditionalRequestHandler)
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
-                .handler(composerProviderHandler)
+                .handler(dartProviderHandler)
                 .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
 
-        builder.route(zipballMatcher()
+        builder.route(archiveMatcher()
                 .handler(timingHandler)
-                .handler(assetKindHandler.rcurry(AssetKind.ZIPBALL))
                 .handler(securityHandler)
                 .handler(exceptionHandler)
                 .handler(handlerContributor)

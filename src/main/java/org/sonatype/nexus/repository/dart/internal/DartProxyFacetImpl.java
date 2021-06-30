@@ -13,16 +13,16 @@
 package org.sonatype.nexus.repository.dart.internal;
 
 import java.io.IOException;
-import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Named;
 
-import org.sonatype.nexus.content.raw.internal.recipe.RawProxyRecipe;
 import org.sonatype.nexus.repository.cache.CacheInfo;
 import org.sonatype.nexus.repository.proxy.ProxyFacetSupport;
 import org.sonatype.nexus.repository.view.Content;
 import org.sonatype.nexus.repository.view.Context;
-import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher;
+
+import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Proxy facet for a Dart repository.
@@ -30,22 +30,30 @@ import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher;
 @Named
 public class DartProxyFacetImpl extends ProxyFacetSupport {
 
+    @Nullable
+    @Override
+    protected Content fetch(Context context, Content stale) throws IOException {
+        try {
+            return super.fetch(context, stale);
+        } catch (NonResolvableProviderJsonException e) {
+            log.debug("Dart provider URL not resolvable: {}", e.getMessage());
+            return null;
+        }
+    }
+
     @Override
     protected Content getCachedContent(Context context) throws IOException {
-        // TODO Auto-generated method stub
-        return null;
+        return content().get(context.getRepository().getUrl());
     }
 
     @Override
     protected Content store(Context context, Content content) throws IOException {
-        // TODO Auto-generated method stub
-        return null;
+        return content().put(context.getRepository().getUrl(), content);
     }
 
     @Override
     protected void indicateVerified(Context context, Content content, CacheInfo cacheInfo) throws IOException {
-        // TODO Auto-generated method stub
-
+        content().setCacheInfo(context.getRepository().getUrl(), content, cacheInfo);
     }
 
     @Override
@@ -57,12 +65,16 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
         return getRepository().facet(DartContentFacet.class);
     }
 
-    /**
-     * Determines what 'asset' this request relates to.
-     */
-    private String assetPath(final Context context) {
-        final TokenMatcher.State tokenMatcherState = context.getAttributes().require(TokenMatcher.State.class);
-        Map<String, String> tokens = tokenMatcherState.getTokens();
+    @VisibleForTesting
+    static class NonResolvableProviderJsonException extends RuntimeException {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1L;
+
+        public NonResolvableProviderJsonException(final String message) {
+            super(message);
+        }
     }
 
 }
