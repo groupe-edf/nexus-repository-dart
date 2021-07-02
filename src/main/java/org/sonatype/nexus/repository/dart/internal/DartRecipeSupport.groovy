@@ -44,7 +44,7 @@ import org.sonatype.nexus.repository.view.matchers.token.TokenMatcher
 abstract class DartRecipeSupport extends RecipeSupport {
 
     @Inject
-    Provider<DartContentFacet> contentFacet
+    Provider<DartFacet> contentFacet
 
     @Inject
     Provider<DartSecurityFacet> securityFacet

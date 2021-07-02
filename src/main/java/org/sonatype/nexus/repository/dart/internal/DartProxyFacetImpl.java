@@ -19,8 +19,12 @@ import javax.inject.Named;
 
 import org.sonatype.nexus.repository.cache.CacheInfo;
 import org.sonatype.nexus.repository.proxy.ProxyFacetSupport;
+import org.sonatype.nexus.repository.storage.Asset;
+import org.sonatype.nexus.repository.storage.StorageTx;
+import org.sonatype.nexus.repository.transaction.TransactionalTouchBlob;
 import org.sonatype.nexus.repository.view.Content;
 import org.sonatype.nexus.repository.view.Context;
+import org.sonatype.nexus.transaction.UnitOfWork;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -43,17 +47,44 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
 
     @Override
     protected Content getCachedContent(Context context) throws IOException {
-        return content().get(context.getRepository().getUrl());
+        AssetKind assetKind = context.getAttributes().require(AssetKind.class);
+        switch (assetKind) {
+        case PACKAGES_METADATA:
+        case PACKAGE_METADATA:
+        case PACKAGE_VERSION_METADATA:
+        case PACKAGE_ARCHIVE:
+            return getAsset(context.getRequest().getPath().substring(1));
+        default:
+            throw new IllegalStateException();
+        }
     }
 
     @Override
     protected Content store(Context context, Content content) throws IOException {
-        return content().put(context.getRepository().getUrl(), content);
+        AssetKind assetKind = context.getAttributes().require(AssetKind.class);
+        String path = context.getRequest().getPath().substring(1);
+        switch (assetKind) {
+        case PACKAGES_METADATA:
+        case PACKAGE_METADATA:
+        case PACKAGE_VERSION_METADATA:
+        case PACKAGE_ARCHIVE:
+        default:
+            throw new IllegalStateException();
+        }
     }
 
     @Override
     protected void indicateVerified(Context context, Content content, CacheInfo cacheInfo) throws IOException {
-        content().setCacheInfo(context.getRepository().getUrl(), content, cacheInfo);
+        StorageTx tx = UnitOfWork.currentTx();
+        Asset asset = Content.findAsset(tx, tx.findBucket(getRepository()), content);
+        if (asset == null) {
+            log.debug("Attempting to set cache info for non-existent Dart asset {}",
+                    content.getAttributes().require(Asset.class));
+            return;
+        }
+        log.debug("Updating cacheInfo of {} to {}", asset, cacheInfo);
+        CacheInfo.applyToAsset(asset, cacheInfo);
+        tx.saveAsset(asset);
     }
 
     @Override
@@ -61,8 +92,22 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
         return context.getRequest().getPath().substring(1);
     }
 
-    private DartContentFacet content() {
-        return getRepository().facet(DartContentFacet.class);
+    private DartFacet content() {
+        return getRepository().facet(DartFacet.class);
+    }
+
+    @TransactionalTouchBlob
+    protected Content getAsset(final String name) {
+        StorageTx tx = UnitOfWork.currentTx();
+
+        Asset asset = facet(DartFacet.class).findAsset(tx, tx.findBucket(getRepository()), name);
+        if (asset == null) {
+            return null;
+        }
+        if (asset.markAsDownloaded()) {
+            tx.saveAsset(asset);
+        }
+        return facet(DartFacet.class).toContent(asset, tx.requireBlob(asset.requireBlobRef()));
     }
 
     @VisibleForTesting
