@@ -12,72 +12,155 @@
  */
 package org.sonatype.nexus.repository.dart.internal;
 
-import java.io.IOException;
+import static org.sonatype.nexus.common.hash.HashAlgorithm.MD5;
+import static org.sonatype.nexus.common.hash.HashAlgorithm.SHA1;
+import static org.sonatype.nexus.common.hash.HashAlgorithm.SHA256;
+import static org.sonatype.nexus.common.hash.HashAlgorithm.SHA512;
+import static org.sonatype.nexus.repository.storage.AssetEntityAdapter.P_ASSET_KIND;
+import static org.sonatype.nexus.repository.storage.MetadataNodeEntityAdapter.P_NAME;
 
+import java.io.IOException;
+import java.util.Collection;
+
+import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.sonatype.nexus.blobstore.api.Blob;
+import org.sonatype.nexus.common.hash.HashAlgorithm;
 import org.sonatype.nexus.repository.FacetSupport;
+import org.sonatype.nexus.repository.Format;
+import org.sonatype.nexus.repository.cache.CacheInfo;
 import org.sonatype.nexus.repository.storage.Asset;
+import org.sonatype.nexus.repository.storage.AssetBlob;
+import org.sonatype.nexus.repository.storage.AssetManager;
 import org.sonatype.nexus.repository.storage.Bucket;
-import org.sonatype.nexus.repository.storage.Component;
+import org.sonatype.nexus.repository.storage.StorageFacet;
 import org.sonatype.nexus.repository.storage.StorageTx;
+import org.sonatype.nexus.repository.transaction.TransactionalStoreBlob;
+import org.sonatype.nexus.repository.transaction.TransactionalStoreMetadata;
+import org.sonatype.nexus.repository.transaction.TransactionalTouchBlob;
+import org.sonatype.nexus.repository.transaction.TransactionalTouchMetadata;
 import org.sonatype.nexus.repository.view.Content;
 import org.sonatype.nexus.repository.view.Payload;
+import org.sonatype.nexus.repository.view.payloads.BlobPayload;
 import org.sonatype.nexus.repository.view.payloads.TempBlob;
+import org.sonatype.nexus.transaction.UnitOfWork;
+
+import com.google.common.collect.ImmutableList;
 
 /**
- * Default (and currently only) implementation of {@code ComposerContentFacet}.
+ * Default (and currently only) implementation of {@code DartFacet}.
  */
 @Named
 public class DartFacetImpl extends FacetSupport implements DartFacet {
 
+    private Format format;
+
+    public static final Collection<HashAlgorithm> HASH_ALGORITHMS = ImmutableList.of(MD5, SHA1, SHA256, SHA512);
+
+    @Inject
+    public DartFacetImpl(@Named(DartFormat.NAME) final Format format) {
+        this.format = format;
+    }
+
+    @Nullable
     @Override
-    public Component findOrCreateComponent(StorageTx tx, DartAttributes dartAttributes) {
-        // TODO Auto-generated method stub
-        return null;
+    @TransactionalTouchBlob
+    public Content get(String path) throws IOException {
+        StorageTx tx = UnitOfWork.currentTx();
+
+        final Asset asset = findAsset(tx, path);
+        if (asset == null) {
+            return null;
+        }
+        if (asset.markAsDownloaded(AssetManager.DEFAULT_LAST_DOWNLOADED_INTERVAL)) {
+            tx.saveAsset(asset);
+        }
+
+        final Blob blob = tx.requireBlob(asset.requireBlobRef());
+        return toContent(asset, blob);
     }
 
     @Override
-    public Asset findOrCreateAsset(StorageTx tx, Component component, String path, DartAttributes dartAttributes) {
-        // TODO Auto-generated method stub
-        return null;
+    public Content put(String path, Payload payload, AssetKind assetKind) throws IOException {
+        StorageFacet storageFacet = facet(StorageFacet.class);
+        try (TempBlob tempBlob = storageFacet.createTempBlob(payload, HASH_ALGORITHMS)) {
+            switch (assetKind) {
+            case PACKAGES_METADATA:
+                return doPutMetadata(path, tempBlob, payload, assetKind);
+            case PACKAGE_METADATA:
+                return doPutMetadata(path, tempBlob, payload, assetKind);
+            case PACKAGE_VERSION_METADATA:
+                return doPutMetadata(path, tempBlob, payload, assetKind);
+            case PACKAGE_ARCHIVE:
+                return doPutContent(path, tempBlob, payload, assetKind, null, null, null);
+            default:
+                throw new IllegalStateException("Unexpected asset kind: " + assetKind);
+            }
+        }
     }
 
     @Override
-    public Asset findOrCreateAsset(StorageTx tx, String path) {
+    @TransactionalTouchMetadata
+    public void setCacheInfo(String path, Content content, CacheInfo cacheInfo) throws IOException {
         // TODO Auto-generated method stub
+
+    }
+
+    @TransactionalStoreBlob
+    protected Content doPutMetadata(final String path, final TempBlob tempBlob, final Payload payload,
+            final AssetKind assetKind) throws IOException {
+        StorageTx tx = UnitOfWork.currentTx();
+        Asset asset = getOrCreateAsset(path);
+        asset.formatAttributes().set(P_ASSET_KIND, assetKind.toString());
+
+        if (payload instanceof Content) {
+            Content.applyToAsset(asset, Content.maintainLastModified(asset, ((Content) payload).getAttributes()));
+        }
+
+        AssetBlob assetBlob = tx.setBlob(asset, path, tempBlob, null, payload.getContentType(), false);
+        tx.saveAsset(asset);
+
+        return toContent(asset, assetBlob.getBlob());
+    }
+
+    @TransactionalStoreBlob
+    protected Content doPutContent(final String path, final TempBlob tempBlob, final Payload payload,
+            final AssetKind assetKind, final String sourceType, final String sourceUrl, final String sourceReference)
+            throws IOException {
         return null;
     }
 
-    @Override
-    public AssetKind getAssetKind(String path) {
-        // TODO Auto-generated method stub
-        return null;
+    @TransactionalStoreMetadata
+    public Asset getOrCreateAsset(final String path) {
+        final StorageTx tx = UnitOfWork.currentTx();
+        final Bucket bucket = tx.findBucket(getRepository());
+
+        Asset asset = findAsset(tx, path);
+        if (asset == null) {
+            asset = tx.createAsset(bucket, format);
+            asset.name(path);
+        }
+
+        asset.markAsDownloaded(AssetManager.DEFAULT_LAST_DOWNLOADED_INTERVAL);
+
+        return asset;
     }
 
-    @Override
-    public Asset findAsset(StorageTx tx, Bucket bucket, String assetName) {
-        // TODO Auto-generated method stub
-        return null;
+    @Nullable
+    private Asset findAsset(final StorageTx tx, final String path) {
+        return tx.findAssetWithProperty(P_NAME, path, tx.findBucket(getRepository()));
     }
 
-    @Override
-    public Content saveAsset(StorageTx tx, Asset asset, TempBlob contentSupplier, Payload payload) throws IOException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Content doCreateOrSaveComponent(DartAttributes dartAttributes, TempBlob componentContent, Payload payload,
-            AssetKind assetKind) throws IOException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Content toContent(Asset asset, Blob blob) {
-        // TODO Auto-generated method stub
-        return null;
+    /**
+     * Convert an asset blob to {@link Content}.
+     *
+     * @return content of asset blob
+     */
+    public Content toContent(final Asset asset, final Blob blob) {
+        Content content = new Content(new BlobPayload(blob, asset.requireContentType()));
+        Content.extractFromAsset(asset, HASH_ALGORITHMS, content.getAttributes());
+        return content;
     }
 }

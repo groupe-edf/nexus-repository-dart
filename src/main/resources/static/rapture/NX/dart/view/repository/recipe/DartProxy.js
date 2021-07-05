@@ -15,7 +15,7 @@
 /**
  * Configuration settings in the UI for a Dart proxy recipe.
  */
-Ext.define('NX.dart.view.repository.recipe.ComposerProxy', {
+Ext.define('NX.dart.view.repository.recipe.DartProxy', {
   extend: 'NX.coreui.view.repository.RepositorySettingsForm',
   alias: 'widget.nx-coreui-repository-dart-proxy',
   requires: [

@@ -22,7 +22,7 @@ Ext.define('NX.dart.util.DartRepositoryUrls', {
   NX.coreui.util.RepositoryUrls.addRepositoryUrlStrategy('dart', function(me, assetModel) {
     var repositoryName = assetModel.get('repositoryName'), assetName = assetModel.get('name');
     return NX.util.Url.asLink(
-        NX.util.Url.baseUrl + '/repository/' + encodeURIComponent(repositoryName) + '/packages/' + encodeURI(assetName),
+        NX.util.Url.baseUrl + '/repository/' + encodeURIComponent(repositoryName) + '/' + encodeURI(assetName),
         assetName);
   });
 });

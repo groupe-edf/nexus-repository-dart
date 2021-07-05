@@ -21,7 +21,6 @@ import org.sonatype.nexus.repository.cache.CacheInfo;
 import org.sonatype.nexus.repository.proxy.ProxyFacetSupport;
 import org.sonatype.nexus.repository.storage.Asset;
 import org.sonatype.nexus.repository.storage.StorageTx;
-import org.sonatype.nexus.repository.transaction.TransactionalTouchBlob;
 import org.sonatype.nexus.repository.view.Content;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.transaction.UnitOfWork;
@@ -33,7 +32,7 @@ import com.google.common.annotations.VisibleForTesting;
  */
 @Named
 public class DartProxyFacetImpl extends ProxyFacetSupport {
-
+    
     @Nullable
     @Override
     protected Content fetch(Context context, Content stale) throws IOException {
@@ -48,12 +47,16 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
     @Override
     protected Content getCachedContent(Context context) throws IOException {
         AssetKind assetKind = context.getAttributes().require(AssetKind.class);
+        String path = context.getRequest().getPath().substring(1);
         switch (assetKind) {
         case PACKAGES_METADATA:
+            return getDartFacet().get(path);
         case PACKAGE_METADATA:
+            return getDartFacet().get(path);
         case PACKAGE_VERSION_METADATA:
+            return getDartFacet().get(path);
         case PACKAGE_ARCHIVE:
-            return getAsset(context.getRequest().getPath().substring(1));
+            return getDartFacet().get(path);
         default:
             throw new IllegalStateException();
         }
@@ -65,9 +68,13 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
         String path = context.getRequest().getPath().substring(1);
         switch (assetKind) {
         case PACKAGES_METADATA:
+            return getDartFacet().put(path, content, assetKind);
         case PACKAGE_METADATA:
+            return getDartFacet().put(path, content, assetKind);
         case PACKAGE_VERSION_METADATA:
+            return getDartFacet().put(path, content, assetKind);
         case PACKAGE_ARCHIVE:
+            return getDartFacet().put(path, content, assetKind);
         default:
             throw new IllegalStateException();
         }
@@ -92,22 +99,8 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
         return context.getRequest().getPath().substring(1);
     }
 
-    private DartFacet content() {
+    private DartFacet getDartFacet() {
         return getRepository().facet(DartFacet.class);
-    }
-
-    @TransactionalTouchBlob
-    protected Content getAsset(final String name) {
-        StorageTx tx = UnitOfWork.currentTx();
-
-        Asset asset = facet(DartFacet.class).findAsset(tx, tx.findBucket(getRepository()), name);
-        if (asset == null) {
-            return null;
-        }
-        if (asset.markAsDownloaded()) {
-            tx.saveAsset(asset);
-        }
-        return facet(DartFacet.class).toContent(asset, tx.requireBlob(asset.requireBlobRef()));
     }
 
     @VisibleForTesting

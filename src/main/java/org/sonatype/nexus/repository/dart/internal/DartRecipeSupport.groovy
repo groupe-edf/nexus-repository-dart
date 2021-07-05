@@ -12,6 +12,9 @@
  */
 package org.sonatype.nexus.repository.dart.internal
 
+import static org.sonatype.nexus.repository.http.HttpMethods.GET
+import static org.sonatype.nexus.repository.http.HttpMethods.HEAD
+
 import javax.inject.Inject
 import javax.inject.Provider
 
@@ -27,6 +30,7 @@ import org.sonatype.nexus.repository.storage.SingleAssetComponentMaintenance
 import org.sonatype.nexus.repository.storage.StorageFacet
 import org.sonatype.nexus.repository.storage.UnitOfWorkHandler
 import org.sonatype.nexus.repository.view.ConfigurableViewFacet
+import org.sonatype.nexus.repository.view.Context
 import org.sonatype.nexus.repository.view.Route.Builder
 import org.sonatype.nexus.repository.view.handlers.ConditionalRequestHandler
 import org.sonatype.nexus.repository.view.handlers.ContentHeadersHandler
@@ -92,35 +96,40 @@ abstract class DartRecipeSupport extends RecipeSupport {
         super(type, format)
     }
 
+    Closure assetKindHandler = { Context context, AssetKind value ->
+        context.attributes.set(AssetKind, value)
+        return context.proceed()
+    }
+
     static Builder packagesMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
-                new ActionMatcher(HttpMethods.GET, HttpMethods.HEAD),
-                new LiteralMatcher('/packages')
+                new ActionMatcher(GET, HEAD),
+                new LiteralMatcher('/api/packages')
                 ))
     }
 
     static Builder packageMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
-                new ActionMatcher(HttpMethods.GET, HttpMethods.HEAD),
-                new TokenMatcher('/packages/{package:.+}')
+                new ActionMatcher(GET, HEAD),
+                new TokenMatcher('/api/packages/{package:.+}')
                 ))
     }
 
     static Builder versionMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
-                new ActionMatcher(HttpMethods.PUT),
-                new TokenMatcher('/packages/{package:.+}/versions/{version:.+}')
+                new ActionMatcher(GET, HEAD),
+                new TokenMatcher('/api/packages/{package:.+}/versions/{version:.+}')
                 ))
     }
 
     static Builder archiveMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
-                new ActionMatcher(HttpMethods.PUT),
-                new TokenMatcher('/packages/{package:.+}/versions/{version:.+}.tar.gz')
+                new ActionMatcher(HttpMethods.GET),
+                new TokenMatcher('/api/packages/{package:.+}/versions/{version:.+}.tar.gz')
                 ))
     }
 }

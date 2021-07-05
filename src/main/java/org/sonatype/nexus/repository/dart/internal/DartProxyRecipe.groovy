@@ -87,6 +87,7 @@ class DartProxyRecipe extends DartRecipeSupport {
 
         builder.route(packagesMatcher()
                 .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.PACKAGES_METADATA))
                 .handler(securityHandler)
                 .handler(exceptionHandler)
                 .handler(handlerContributor)
@@ -100,6 +101,7 @@ class DartProxyRecipe extends DartRecipeSupport {
 
         builder.route(packageMatcher()
                 .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_METADATA))
                 .handler(securityHandler)
                 .handler(exceptionHandler)
                 .handler(handlerContributor)
@@ -113,6 +115,7 @@ class DartProxyRecipe extends DartRecipeSupport {
 
         builder.route(versionMatcher()
                 .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_VERSION_METADATA))
                 .handler(securityHandler)
                 .handler(exceptionHandler)
                 .handler(handlerContributor)
@@ -127,6 +130,7 @@ class DartProxyRecipe extends DartRecipeSupport {
 
         builder.route(archiveMatcher()
                 .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_ARCHIVE))
                 .handler(securityHandler)
                 .handler(exceptionHandler)
                 .handler(handlerContributor)

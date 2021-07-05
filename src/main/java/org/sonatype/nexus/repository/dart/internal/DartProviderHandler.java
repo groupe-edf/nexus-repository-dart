@@ -14,22 +14,29 @@ package org.sonatype.nexus.repository.dart.internal;
 
 import javax.annotation.Nonnull;
 
+import org.sonatype.nexus.repository.http.HttpResponses;
+import org.sonatype.nexus.repository.http.HttpStatus;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.repository.view.Handler;
 import org.sonatype.nexus.repository.view.Response;
 
 /**
- * Handler that rewrites the content of responses containing Dart provider
- * JSON files so that they point to the proxy repository rather than the
- * repository being proxied.
+ * Handler that rewrites the content of responses containing Dart provider JSON
+ * files so that they point to the proxy repository rather than the repository
+ * being proxied.
  */
 public class DartProviderHandler implements Handler {
-    
+
     public static final String DO_NOT_REWRITE = "DartProviderHandler.doNotRewrite";
 
     @Nonnull
     @Override
     public Response handle(@Nonnull final Context context) throws Exception {
-        return context.proceed();
+        Response response = context.proceed();
+        if (!Boolean.parseBoolean(context.getRequest().getAttributes().get(DO_NOT_REWRITE, String.class))
+                && response.getStatus().getCode() == HttpStatus.OK && response.getPayload() != null) {
+            response = HttpResponses.ok();
+        }
+        return response;
     }
 }
