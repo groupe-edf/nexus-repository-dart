@@ -12,11 +12,13 @@
  */
 package org.sonatype.nexus.repository.dart.internal;
 
+import static java.util.Collections.singletonList;
 import static org.sonatype.nexus.common.hash.HashAlgorithm.MD5;
 import static org.sonatype.nexus.common.hash.HashAlgorithm.SHA1;
 import static org.sonatype.nexus.common.hash.HashAlgorithm.SHA256;
 import static org.sonatype.nexus.common.hash.HashAlgorithm.SHA512;
 import static org.sonatype.nexus.repository.storage.AssetEntityAdapter.P_ASSET_KIND;
+import static org.sonatype.nexus.repository.storage.ComponentEntityAdapter.P_VERSION;
 import static org.sonatype.nexus.repository.storage.MetadataNodeEntityAdapter.P_NAME;
 
 import java.io.IOException;
@@ -35,6 +37,8 @@ import org.sonatype.nexus.repository.storage.Asset;
 import org.sonatype.nexus.repository.storage.AssetBlob;
 import org.sonatype.nexus.repository.storage.AssetManager;
 import org.sonatype.nexus.repository.storage.Bucket;
+import org.sonatype.nexus.repository.storage.Component;
+import org.sonatype.nexus.repository.storage.Query;
 import org.sonatype.nexus.repository.storage.StorageFacet;
 import org.sonatype.nexus.repository.storage.StorageTx;
 import org.sonatype.nexus.repository.transaction.TransactionalStoreBlob;
@@ -129,7 +133,32 @@ public class DartFacetImpl extends FacetSupport implements DartFacet {
     protected Content doPutContent(final String path, final TempBlob tempBlob, final Payload payload,
             final AssetKind assetKind, final String sourceType, final String sourceUrl, final String sourceReference)
             throws IOException {
-        return null;
+        String[] parts = path.split("/");
+        String name = parts[1];
+        String version = parts[3].split(".tar.gz")[0];
+
+        StorageTx tx = UnitOfWork.currentTx();
+
+        Asset asset = getOrCreateAsset(path, name, version);
+
+        if (payload instanceof Content) {
+            Content.applyToAsset(asset, Content.maintainLastModified(asset, ((Content) payload).getAttributes()));
+        }
+
+        AssetBlob assetBlob = tx.setBlob(asset, path, tempBlob, null, payload.getContentType(), false);
+
+        try {
+            asset.formatAttributes().clear();
+            asset.formatAttributes().set(P_ASSET_KIND, assetKind.toString());
+            asset.formatAttributes().set(P_NAME, name);
+            asset.formatAttributes().set(P_VERSION, version);
+        } catch (Exception e) {
+            log.error("Error extracting format attributes for {}, skipping", path, e);
+        }
+
+        tx.saveAsset(asset);
+
+        return toContent(asset, assetBlob.getBlob());
     }
 
     @TransactionalStoreMetadata
@@ -148,9 +177,42 @@ public class DartFacetImpl extends FacetSupport implements DartFacet {
         return asset;
     }
 
+    @TransactionalStoreMetadata
+    public Asset getOrCreateAsset(final String path, final String name, final String version) {
+        final StorageTx tx = UnitOfWork.currentTx();
+        final Bucket bucket = tx.findBucket(getRepository());
+
+        Component component = findComponent(tx, name, version);
+        if (component == null) {
+            component = tx.createComponent(bucket, format).name(name).version(version);
+            tx.saveComponent(component);
+        }
+
+        Asset asset = findAsset(tx, path);
+        if (asset == null) {
+            asset = tx.createAsset(bucket, component);
+            asset.name(path);
+        }
+
+        asset.markAsDownloaded(AssetManager.DEFAULT_LAST_DOWNLOADED_INTERVAL);
+
+        return asset;
+    }
+
     @Nullable
     private Asset findAsset(final StorageTx tx, final String path) {
         return tx.findAssetWithProperty(P_NAME, path, tx.findBucket(getRepository()));
+    }
+
+    @Nullable
+    private Component findComponent(final StorageTx tx, final String name, final String version) {
+        Iterable<Component> components = tx.findComponents(
+                Query.builder().where(P_NAME).eq(name).and(P_VERSION).eq(version).build(),
+                singletonList(getRepository()));
+        if (components.iterator().hasNext()) {
+            return components.iterator().next();
+        }
+        return null;
     }
 
     /**
