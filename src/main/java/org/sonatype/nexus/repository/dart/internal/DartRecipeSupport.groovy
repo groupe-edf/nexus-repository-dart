@@ -129,7 +129,7 @@ abstract class DartRecipeSupport extends RecipeSupport {
         new Builder().matcher(
                 LogicMatchers.and(
                 new ActionMatcher(HttpMethods.GET),
-                new TokenMatcher('/api/packages/{package:.+}/versions/{version:.+}.tar.gz')
+                new TokenMatcher('/packages/{package:.+}/versions/{version:.+}.tar.gz')
                 ))
     }
 }

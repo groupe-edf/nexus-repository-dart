@@ -60,7 +60,7 @@ class DartProxyRecipe extends DartRecipeSupport {
     Provider<HttpClientFacet> httpClientFacet
 
     @Inject
-    DartProviderHandler dartProviderHandler
+    DartPackagesHandler dartPackagesHandler
 
     @Inject
     DartProxyRecipe(@Named(ProxyType.NAME) final Type type, @Named(DartFormat.NAME) final Format format) {
@@ -95,6 +95,7 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(conditionalRequestHandler)
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
+                .handler(dartPackagesHandler)
                 .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
@@ -109,6 +110,7 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(conditionalRequestHandler)
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
+                .handler(dartPackagesHandler)
                 .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
@@ -123,7 +125,7 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(conditionalRequestHandler)
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
-                .handler(dartProviderHandler)
+                .handler(dartPackagesHandler)
                 .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
