@@ -21,6 +21,7 @@ import org.sonatype.nexus.repository.cache.CacheInfo;
 import org.sonatype.nexus.repository.proxy.ProxyFacetSupport;
 import org.sonatype.nexus.repository.storage.Asset;
 import org.sonatype.nexus.repository.storage.StorageTx;
+import org.sonatype.nexus.repository.transaction.TransactionalTouchMetadata;
 import org.sonatype.nexus.repository.view.Content;
 import org.sonatype.nexus.repository.view.Context;
 import org.sonatype.nexus.transaction.UnitOfWork;
@@ -81,6 +82,7 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
     }
 
     @Override
+    @TransactionalTouchMetadata
     protected void indicateVerified(Context context, Content content, CacheInfo cacheInfo) throws IOException {
         StorageTx tx = UnitOfWork.currentTx();
         Asset asset = Content.findAsset(tx, tx.findBucket(getRepository()), content);

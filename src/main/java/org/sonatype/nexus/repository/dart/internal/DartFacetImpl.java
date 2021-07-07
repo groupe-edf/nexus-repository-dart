@@ -32,7 +32,6 @@ import org.sonatype.nexus.blobstore.api.Blob;
 import org.sonatype.nexus.common.hash.HashAlgorithm;
 import org.sonatype.nexus.repository.FacetSupport;
 import org.sonatype.nexus.repository.Format;
-import org.sonatype.nexus.repository.cache.CacheInfo;
 import org.sonatype.nexus.repository.storage.Asset;
 import org.sonatype.nexus.repository.storage.AssetBlob;
 import org.sonatype.nexus.repository.storage.AssetManager;
@@ -44,7 +43,6 @@ import org.sonatype.nexus.repository.storage.StorageTx;
 import org.sonatype.nexus.repository.transaction.TransactionalStoreBlob;
 import org.sonatype.nexus.repository.transaction.TransactionalStoreMetadata;
 import org.sonatype.nexus.repository.transaction.TransactionalTouchBlob;
-import org.sonatype.nexus.repository.transaction.TransactionalTouchMetadata;
 import org.sonatype.nexus.repository.view.Content;
 import org.sonatype.nexus.repository.view.Payload;
 import org.sonatype.nexus.repository.view.payloads.BlobPayload;
@@ -104,13 +102,6 @@ public class DartFacetImpl extends FacetSupport implements DartFacet {
                 throw new IllegalStateException("Unexpected asset kind: " + assetKind);
             }
         }
-    }
-
-    @Override
-    @TransactionalTouchMetadata
-    public void setCacheInfo(String path, Content content, CacheInfo cacheInfo) throws IOException {
-        // TODO Auto-generated method stub
-
     }
 
     @TransactionalStoreBlob
