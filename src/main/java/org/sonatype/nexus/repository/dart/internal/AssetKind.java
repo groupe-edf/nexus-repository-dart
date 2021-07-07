@@ -7,6 +7,7 @@ import org.sonatype.nexus.repository.cache.CacheControllerHolder.CacheType;
 
 /**
  * Asset kinds for Dart.
+ * 
  * @author Mathieu Delrocq
  */
 public enum AssetKind {
@@ -19,11 +20,11 @@ public enum AssetKind {
     private final CacheType cacheType;
 
     AssetKind(final CacheType cacheType) {
-      this.cacheType = cacheType;
+        this.cacheType = cacheType;
     }
 
     @Nonnull
     public CacheType getCacheType() {
-      return cacheType;
+        return cacheType;
     }
 }

@@ -82,9 +82,16 @@ class DartProxyRecipe extends DartRecipeSupport {
         repository.attach(purgeUnusedFacet.get())
     }
 
+    /**
+     * Configure all {@link Route} for Dart APIs
+     * 
+     * @param facet
+     * @return configured {@link ViewFacet}
+     */
     private ViewFacet configure(final ConfigurableViewFacet facet) {
         Router.Builder builder = new Router.Builder()
 
+        // Route for Dart packages api
         builder.route(packagesMatcher()
                 .handler(timingHandler)
                 .handler(assetKindHandler.rcurry(AssetKind.PACKAGES_METADATA))
@@ -95,11 +102,12 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(conditionalRequestHandler)
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
-                .handler(dartPackagesHandler)
+                .handler(dartPackagesHandler) // Handled to rewrite urls
                 .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
 
+        // Route for Dart package api
         builder.route(packageMatcher()
                 .handler(timingHandler)
                 .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_METADATA))
@@ -110,11 +118,12 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(conditionalRequestHandler)
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
-                .handler(dartPackagesHandler)
+                .handler(dartPackagesHandler) // Handled to rewrite urls
                 .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
 
+        // Route for Dart package version api
         builder.route(versionMatcher()
                 .handler(timingHandler)
                 .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_VERSION_METADATA))
@@ -125,11 +134,12 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(conditionalRequestHandler)
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
-                .handler(dartPackagesHandler)
+                .handler(dartPackagesHandler) // Handled to rewrite urls
                 .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
 
+        // Route for Dart package archive api
         builder.route(archiveMatcher()
                 .handler(timingHandler)
                 .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_ARCHIVE))

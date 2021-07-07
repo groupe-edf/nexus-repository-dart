@@ -55,6 +55,7 @@ import com.google.common.collect.ImmutableList;
 
 /**
  * Default (and currently only) implementation of {@code DartFacet}.
+ * 
  */
 @Named
 public class DartFacetImpl extends FacetSupport implements DartFacet {

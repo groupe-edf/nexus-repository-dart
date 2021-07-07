@@ -25,6 +25,8 @@ import org.sonatype.nexus.repository.view.Response;
  * Handler that rewrites the content of responses containing Dart provider JSON
  * files so that they point to the proxy repository rather than the repository
  * being proxied.
+ * 
+ * @author Mathieu Delrocq
  */
 public class DartPackagesHandler implements Handler {
 
@@ -37,6 +39,12 @@ public class DartPackagesHandler implements Handler {
         this.dartJsonProcessor = dartJsonProcessor;
     }
 
+    /**
+     * Intercept requests for dart APIs calls and rewrite urls in json response
+     * 
+     * @param context: {@link Context} of the request
+     * @return modified response
+     */
     @Nonnull
     @Override
     public Response handle(@Nonnull final Context context) throws Exception {

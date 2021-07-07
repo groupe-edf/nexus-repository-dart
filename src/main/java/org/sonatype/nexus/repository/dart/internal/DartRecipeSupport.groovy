@@ -96,11 +96,19 @@ abstract class DartRecipeSupport extends RecipeSupport {
         super(type, format)
     }
 
+    /**
+     * Return the {@link AssetKind} associated to this request
+     */
     Closure assetKindHandler = { Context context, AssetKind value ->
         context.attributes.set(AssetKind, value)
         return context.proceed()
     }
 
+    /**
+     * Route matcher for Dart packages api
+     * 
+     * @return Route {@link Builder} of this matcher
+     */
     static Builder packagesMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
@@ -109,6 +117,11 @@ abstract class DartRecipeSupport extends RecipeSupport {
                 ))
     }
 
+    /**
+     * Route matcher for Dart package api
+     *
+     * @return Route {@link Builder} of this matcher
+     */
     static Builder packageMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
@@ -117,6 +130,11 @@ abstract class DartRecipeSupport extends RecipeSupport {
                 ))
     }
 
+    /**
+     * Route matcher for Dart package version api
+     *
+     * @return Route {@link Builder} of this matcher
+     */
     static Builder versionMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
@@ -125,6 +143,11 @@ abstract class DartRecipeSupport extends RecipeSupport {
                 ))
     }
 
+    /**
+     * Route matcher for Dart package archive api
+     *
+     * @return Route {@link Builder} of this matcher
+     */
     static Builder archiveMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(

@@ -26,6 +26,8 @@ import groovy.json.JsonSlurper
  * Class encapsulating JSON processing for Dart-format repositories, including
  * operations for parsing JSON indexes and rewriting them to be compatible with
  * a proxy repository.
+ * 
+ * @author Mathieu Delrocq
  */
 @Named
 @Singleton

@@ -32,7 +32,7 @@ import com.google.common.annotations.VisibleForTesting;
  */
 @Named
 public class DartProxyFacetImpl extends ProxyFacetSupport {
-    
+
     @Nullable
     @Override
     protected Content fetch(Context context, Content stale) throws IOException {
@@ -99,6 +99,11 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
         return context.getRequest().getPath().substring(1);
     }
 
+    /**
+     * Return the Facet associated with the repository
+     * 
+     * @return {@link DartFacet}
+     */
     private DartFacet getDartFacet() {
         return getRepository().facet(DartFacet.class);
     }
