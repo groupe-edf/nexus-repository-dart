@@ -2,7 +2,7 @@
 
 # nexus-repository-dart
 
-Nexus plugin to configure dart repository
+Nexus plugin to configure Dart repositories
 
 ## Features
 
@@ -10,7 +10,7 @@ Nexus plugin to configure dart repository
 
 ## Requirements
 
-- Nexus Repository Manager 3.31.1-01
+- Nexus Repository Manager up to 3.31.0-01
 
 ## Configuration
 
