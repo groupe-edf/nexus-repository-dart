@@ -10,6 +10,7 @@
         <version>3.31.0-01</version>
     </parent>
 
+    <groupId>fr.edf.nexus.plugins</groupId>
     <artifactId>nexus-repository-dart</artifactId>
     <packaging>bundle</packaging>
     <version>0.0.1-SNAPSHOT</version>

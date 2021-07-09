@@ -1,4 +1,4 @@
-package org.sonatype.nexus.repository.dart.internal;
+package fr.edf.nexus.plugins.repository.dart.internal;
 
 import javax.annotation.Nonnull;
 

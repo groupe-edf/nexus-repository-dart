@@ -10,23 +10,27 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package org.sonatype.nexus.repository.dart.internal;
+package fr.edf.nexus.plugins.repository.dart.internal.ui;
 
+import javax.annotation.Priority;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.sonatype.nexus.repository.Format;
+import org.sonatype.nexus.rapture.UiPluginDescriptorSupport;
 
 /**
- * Class representing the Dart format.
+ * Plugin descriptor that registers the plugin-specific UI components (and
+ * Javascript) with the repository manager.
  */
-@Named(DartFormat.NAME)
+@Named
 @Singleton
-public class DartFormat extends Format {
+@Priority(Integer.MAX_VALUE - 200)
+public class UiPluginDescriptorImpl extends UiPluginDescriptorSupport {
 
-    public static final String NAME = "dart";
-
-    public DartFormat() {
-        super(NAME);
+    public UiPluginDescriptorImpl() {
+        super("nexus-repository-dart");
+        setNamespace("NX.dart");
+        setConfigClassName("NX.dart.app.PluginConfig");
     }
+
 }
