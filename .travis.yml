@@ -1,0 +1,7 @@
+language: java
+jdk: 
+  - openjdk8
+script:
+  - mvn -P enable-jacoco install jacoco:report --batch-mode
+after_success:
+  - mvn coveralls:report --batch-mode
