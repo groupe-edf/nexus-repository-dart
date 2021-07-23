@@ -40,10 +40,10 @@ import org.sonatype.nexus.transaction.UnitOfWork;
 
 public class DartFacetImplTest extends TestSupport {
 
-    private static final String PACKAGES_PATH = "api/packages";
-    private static final String PACKAGE_PATH = "api/packages/carp_webservices";
-    private static final String VERSION_PATH = "api/packages/carp_webservices/versions/0.30.0";
-    private static final String TAR_PATH = "packages/carp_webservices/versions/0.30.0.tar.gz";
+    private static final String PACKAGES_PATH = "/api/packages";
+    private static final String PACKAGE_PATH = "/api/packages/project_test";
+    private static final String VERSION_PATH = "/api/packages/project_test/versions/0.0.1";
+    private static final String TAR_PATH = "/packages/project_test/versions/0.0.1.tar.gz";
 
     private static final String CONTENT_TYPE = "content-type";
 
