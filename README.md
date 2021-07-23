@@ -2,6 +2,9 @@
 
 # nexus-repository-dart
 
+[![Build Status](https://travis-ci.com/groupe-edf/nexus-repository-dart.svg?branch=main)](https://travis-ci.com/groupe-edf/nexus-repository-dart)
+[![Coverage Status](https://coveralls.io/repos/github/groupe-edf/nexus-repository-dart/badge.svg?branch=main)](https://coveralls.io/github/groupe-edf/nexus-repository-dart?branch=main)
+
 Nexus plugin to configure Dart repositories
 
 ## Features
