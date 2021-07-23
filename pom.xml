@@ -75,6 +75,7 @@
         <dependency>
             <groupId>org.sonatype.nexus.testsuite</groupId>
             <artifactId>nexus-repository-testsupport</artifactId>
+            <version>${nxrm-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
