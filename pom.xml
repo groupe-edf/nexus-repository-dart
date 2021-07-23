@@ -40,7 +40,7 @@
     </developers>
     <contributors>
         <contributor>
-            <name>Olivier Routier</name>
+            <name>Cloudehard</name>
             <url>https://github.com/Cloudehard</url>
             <organization>EDF</organization>
             <organizationUrl>https://github.com/groupe-edf</organizationUrl>
@@ -63,17 +63,19 @@
         </dependency>
         <dependency>
             <groupId>org.sonatype.nexus</groupId>
-            <artifactId>nexus-testsupport</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.sonatype.nexus</groupId>
             <artifactId>nexus-rapture</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
+        </dependency>
+
+        <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.sonatype.nexus.testsuite</groupId>
+            <artifactId>nexus-repository-testsupport</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

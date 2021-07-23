@@ -25,6 +25,7 @@ import org.sonatype.nexus.rapture.UiPluginDescriptorSupport;
 @Named
 @Singleton
 @Priority(Integer.MAX_VALUE - 200)
+@SuppressWarnings("deprecation")
 public class UiPluginDescriptorImpl extends UiPluginDescriptorSupport {
 
     public UiPluginDescriptorImpl() {
