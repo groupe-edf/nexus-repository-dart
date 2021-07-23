@@ -81,6 +81,22 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <argLine>
+                            ${jaCoCoArgLine}
+                            -Xmx300M
+                            -XX:MaxDirectMemorySize=2G
+                            -XX:+HeapDumpOnOutOfMemoryError
+                            -XX:HeapDumpPath=${project.build.directory}/surefire-reports
+                        </argLine>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.sonatype.nexus.buildsupport</groupId>
