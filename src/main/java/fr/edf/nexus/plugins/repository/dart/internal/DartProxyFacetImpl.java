@@ -48,7 +48,7 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
     @Override
     protected Content getCachedContent(Context context) throws IOException {
         AssetKind assetKind = context.getAttributes().require(AssetKind.class);
-        String path = context.getRequest().getPath().substring(1);
+        String path = checkPath(context);
         switch (assetKind) {
         case PACKAGES_METADATA:
             return getDartFacet().get(path);
@@ -66,7 +66,7 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
     @Override
     protected Content store(Context context, Content content) throws IOException {
         AssetKind assetKind = context.getAttributes().require(AssetKind.class);
-        String path = context.getRequest().getPath().substring(1);
+        String path = checkPath(context);
         switch (assetKind) {
         case PACKAGES_METADATA:
             return getDartFacet().put(path, content, assetKind);
@@ -87,8 +87,7 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
         StorageTx tx = UnitOfWork.currentTx();
         Asset asset = Content.findAsset(tx, tx.findBucket(getRepository()), content);
         if (asset == null) {
-            log.debug("Attempting to set cache info for non-existent Dart asset {}",
-                    content.getAttributes().require(Asset.class));
+            log.debug("Attempting to set cache info for non-existent Dart asset {}", context.getRequest().getPath());
             return;
         }
         log.debug("Updating cacheInfo of {} to {}", asset, cacheInfo);
@@ -120,6 +119,22 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
         public NonResolvableProviderJsonException(final String message) {
             super(message);
         }
+    }
+
+    /**
+     * Remove the '/' at the start of the path to save asset at the root of the
+     * repository.
+     * 
+     * @param path
+     * @return path which not start with '/'
+     */
+    @VisibleForTesting
+    public String checkPath(Context context) {
+        String path = context.getRequest().getPath();
+        if (path.startsWith("/")) {
+            path = getUrl(context);
+        }
+        return path;
     }
 
 }
