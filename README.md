@@ -4,6 +4,7 @@
 
 [![Build Status](https://travis-ci.com/groupe-edf/nexus-repository-dart.svg?branch=main)](https://travis-ci.com/groupe-edf/nexus-repository-dart)
 [![Coverage Status](https://coveralls.io/repos/github/groupe-edf/nexus-repository-dart/badge.svg?branch=main)](https://coveralls.io/github/groupe-edf/nexus-repository-dart?branch=main)
+[![DepShield Badge](https://depshield.sonatype.org/badges/groupe-edf/nexus-repository-dart/depshield.svg)](https://depshield.github.io)
 
 Nexus plugin to configure Dart repositories
 
