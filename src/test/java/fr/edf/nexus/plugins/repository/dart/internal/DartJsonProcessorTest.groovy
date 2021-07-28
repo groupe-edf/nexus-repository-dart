@@ -2,6 +2,7 @@ package fr.edf.nexus.plugins.repository.dart.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is
+import static org.junit.Assert.assertArrayEquals
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
@@ -47,6 +48,10 @@ public class DartJsonProcessorTest extends TestSupport {
             Payload result = dartJsonProcessor.rewritePackagesJson(repository, payload)
             def jsonResult = slurper.parse(result.openInputStream())
             assertThat(String.valueOf(jsonResult.next_url).startsWith(NEXUS_DART_URL), is(true))
+            URI uri = new URI(String.valueOf(jsonResult.next_url))
+            assertThat(uri.getHost().equals("nexus"), is(true))
+            assertThat(uri.getRawPath().equals("/repository/dart/api/packages"), is(true))
+            assertThat(uri.getRawQuery().equals("page=2"), is(true))
             jsonResult.packages.each {
                 assertThat(String.valueOf(it.latest.archive_url).startsWith(NEXUS_DART_URL), is(true))
                 assertThat(String.valueOf(it.latest.package_url).startsWith(NEXUS_DART_URL), is(true))
@@ -65,6 +70,10 @@ public class DartJsonProcessorTest extends TestSupport {
             Payload result = dartJsonProcessor.rewritePackageJson(repository, payload)
             def jsonResult = slurper.parse(result.openInputStream())
             assertThat(String.valueOf(jsonResult.latest.archive_url).startsWith(NEXUS_DART_URL), is(true))
+            URI uri = new URI(String.valueOf(jsonResult.latest.archive_url))
+            assertThat(uri.getHost().equals("nexus"), is(true))
+            assertThat(uri.getRawPath().equals("/repository/dart/packages/hypersnapsdk_flutter/versions/1.0.2.tar.gz"), is(true))
+            assertThat(uri.getRawQuery() == null, is(true))
             jsonResult.versions.each {
                 assertThat(String.valueOf(it.archive_url).startsWith(NEXUS_DART_URL), is(true))
             }
@@ -81,6 +90,10 @@ public class DartJsonProcessorTest extends TestSupport {
             Payload result = dartJsonProcessor.rewriteVersionJson(repository, payload)
             def jsonResult = slurper.parse(result.openInputStream())
             assertThat(String.valueOf(jsonResult.archive_url).startsWith(NEXUS_DART_URL), is(true))
+            URI uri = new URI(String.valueOf(jsonResult.archive_url))
+            assertThat(uri.getHost().equals("nexus"), is(true))
+            assertThat(uri.getRawPath().equals("/repository/dart/packages/hypersnapsdk_flutter/versions/1.0.2.tar.gz"), is(true))
+            assertThat(uri.getRawQuery() == null, is(true))
         } catch (Exception e) {
             assertThat("Error during rewriteVersion due to exception " + e.toString(), false)
         }

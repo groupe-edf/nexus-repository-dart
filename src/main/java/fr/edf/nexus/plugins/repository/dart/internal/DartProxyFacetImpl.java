@@ -24,6 +24,7 @@ import org.sonatype.nexus.repository.storage.StorageTx;
 import org.sonatype.nexus.repository.transaction.TransactionalTouchMetadata;
 import org.sonatype.nexus.repository.view.Content;
 import org.sonatype.nexus.repository.view.Context;
+import org.sonatype.nexus.repository.view.Parameters;
 import org.sonatype.nexus.transaction.UnitOfWork;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -51,7 +52,7 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
         String path = checkPath(context);
         switch (assetKind) {
         case PACKAGES_METADATA:
-            return getDartFacet().get(path);
+            return null; // never use the cache for /api/packages
         case PACKAGE_METADATA:
             return getDartFacet().get(path);
         case PACKAGE_VERSION_METADATA:
@@ -97,7 +98,14 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
 
     @Override
     protected String getUrl(Context context) {
-        return context.getRequest().getPath().substring(1);
+        StringBuilder builder = new StringBuilder(context.getRequest().getPath().substring(1));
+        Parameters params = context.getRequest().getParameters();
+        if (!params.isEmpty()) {
+            builder.append('?');
+            params.forEach(p -> builder.append(p.getKey()).append('=').append(p.getValue()).append('&'));
+            builder.substring(0, builder.lastIndexOf("&"));
+        }
+        return builder.toString();
     }
 
     /**
@@ -132,7 +140,7 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
     public String checkPath(Context context) {
         String path = context.getRequest().getPath();
         if (path.startsWith("/")) {
-            path = getUrl(context);
+            path = path.substring(1);
         }
         return path;
     }

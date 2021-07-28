@@ -156,8 +156,8 @@ public class DartProxyFacetImplTest extends TestSupport {
         when(contextAttributes.require(AssetKind.class)).thenReturn(AssetKind.PACKAGES_METADATA);
         when(dartFacet.get(PACKAGES_PATH)).thenReturn(content);
         when(request.getPath()).thenReturn(PACKAGES_PATH);
-
-        assertThat(underTest.getCachedContent(context), is(content));
+        // getCachedContent for api/packages should always return null
+        assertThat(underTest.getCachedContent(context) == null, is(true));
     }
 
     @Test
