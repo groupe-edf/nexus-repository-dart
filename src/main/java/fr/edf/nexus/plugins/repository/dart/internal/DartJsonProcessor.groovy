@@ -87,20 +87,21 @@ public class DartJsonProcessor {
      * 
      * @param repository: current repository
      * @param urlInput: URL to rewrite
-     * @return modified URL
+     * @return modified URL as String
      */
     private String rewriteUrl(final Repository repository, String urlInput) {
         if(urlInput) {
-            URI uri = new URI(urlInput)
-            StringBuilder result = new StringBuilder(repository.getUrl())
-            result.append(uri.getRawPath())
-            if(uri.getRawQuery()) {
-                result.append('?').append(uri.getRawQuery())
-            }
-            if(uri.getRawFragment()) {
-                result.append('#').append(uri.getRawFragment())
-            }
-            return result.toString()
+            URI input = new URI(urlInput)
+            URI repositoryUrl = new URI(repository.getUrl())
+            URI output = new URI(
+                    repositoryUrl.scheme,
+                    repositoryUrl.userInfo,
+                    repositoryUrl.host,
+                    repositoryUrl.port,
+                    repositoryUrl.path + input.path,
+                    input.query,
+                    input.fragment)
+            return output.toURL().toString()
         }
         return urlInput
     }
