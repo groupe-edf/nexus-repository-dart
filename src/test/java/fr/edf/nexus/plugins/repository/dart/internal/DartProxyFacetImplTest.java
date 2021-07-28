@@ -28,6 +28,7 @@ import org.sonatype.nexus.repository.storage.Bucket;
 import org.sonatype.nexus.repository.storage.StorageTx;
 import org.sonatype.nexus.repository.view.Content;
 import org.sonatype.nexus.repository.view.Context;
+import org.sonatype.nexus.repository.view.Parameters;
 import org.sonatype.nexus.repository.view.Payload;
 import org.sonatype.nexus.repository.view.Request;
 import org.sonatype.nexus.repository.view.Response;
@@ -262,5 +263,27 @@ public class DartProxyFacetImplTest extends TestSupport {
         String result = underTest.checkPath(context);
 
         assertThat(result.equals(PACKAGES_PATH), is(true));
+    }
+
+    @Test
+    public void getUrlTestWithoutParams() {
+        when(request.getPath()).thenReturn("/" + PACKAGES_PATH);
+        when(request.getParameters()).thenReturn(new Parameters());
+
+        String result = underTest.getUrl(context);
+
+        assertThat(result.equals(PACKAGES_PATH), is(true));
+    }
+
+    @Test
+    public void getUrlTestWithParams() {
+        when(request.getPath()).thenReturn("/" + PACKAGES_PATH);
+        Parameters params = new Parameters();
+        params.set("page", "1");
+        when(request.getParameters()).thenReturn(params);
+
+        String result = underTest.getUrl(context);
+
+        assertThat(result.equals(PACKAGES_PATH + "?page=1"), is(true));
     }
 }

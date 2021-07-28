@@ -103,7 +103,7 @@ public class DartProxyFacetImpl extends ProxyFacetSupport {
         if (!params.isEmpty()) {
             builder.append('?');
             params.forEach(p -> builder.append(p.getKey()).append('=').append(p.getValue()).append('&'));
-            builder.substring(0, builder.lastIndexOf("&"));
+            builder.deleteCharAt(builder.lastIndexOf("&"));
         }
         return builder.toString();
     }
