@@ -13,7 +13,7 @@
     <groupId>fr.edf.nexus.plugins</groupId>
     <artifactId>nexus-repository-dart</artifactId>
     <packaging>bundle</packaging>
-    <version>1.0.1</version>
+    <version>1.0.2-SNAPSHOT</version>
 
     <inceptionYear>2021</inceptionYear>
 
