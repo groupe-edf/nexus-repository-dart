@@ -45,8 +45,8 @@ class DartHostedRecipeImpl extends DartRecipeSupport implements DartHostedRecipe
     @Inject
     Provider<DartHostedMetadataFacet> hostedMetadataFacet
 
-    @Inject
-    DartHostedUploadHandler uploadHandler
+//    @Inject
+//    DartHostedUploadHandler uploadHandler
 
     @Inject
     DartHostedDownloadHandler downloadHandler
@@ -124,7 +124,7 @@ class DartHostedRecipeImpl extends DartRecipeSupport implements DartHostedRecipe
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
                 .handler(unitOfWorkHandler)
-                .handler(uploadHandler)
+//                .handler(uploadHandler)
                 .create())
 
         addBrowseUnsupportedRoute(builder)
