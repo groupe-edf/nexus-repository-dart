@@ -1,4 +1,4 @@
-package fr.edf.nexus.plugins.repository.dart.internal.proxy;
+package fr.edf.nexus.plugins.repository.dart.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -39,7 +39,7 @@ import org.sonatype.nexus.transaction.UnitOfWork;
 import fr.edf.nexus.plugins.repository.dart.internal.AssetKind;
 import fr.edf.nexus.plugins.repository.dart.internal.DartFacet;
 import fr.edf.nexus.plugins.repository.dart.internal.DartJsonProcessor;
-import fr.edf.nexus.plugins.repository.dart.internal.proxy.DartProxyFacetImpl;
+import fr.edf.nexus.plugins.repository.dart.internal.DartProxyFacetImpl;
 
 public class DartProxyFacetImplTest extends TestSupport {
 
