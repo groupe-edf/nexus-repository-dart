@@ -32,109 +32,108 @@ import fr.edf.nexus.plugins.repository.dart.internal.DartFormat
 import fr.edf.nexus.plugins.repository.dart.internal.DartRecipeSupport
 
 /**
- * Recipe for creating a Composer hosted repository.
+ * Recipe for creating a Dart hosted repository.
  */
 @Named(DartHostedRecipe.NAME)
 @Singleton
-class DartHostedRecipe
-    extends DartRecipeSupport
-{
-  public static final String NAME = 'composer-hosted'
+class DartHostedRecipe extends DartRecipeSupport {
 
-  @Inject
-  Provider<DartHostedFacet> hostedFacet
+    public static final String NAME = 'dart-hosted'
 
-  @Inject
-  Provider<DartHostedMetadataFacet> hostedMetadataFacet
+    @Inject
+    Provider<DartHostedFacet> hostedFacet
 
-  @Inject
-  DartHostedUploadHandler uploadHandler
+    @Inject
+    Provider<DartHostedMetadataFacet> hostedMetadataFacet
 
-  @Inject
-  DartHostedDownloadHandler downloadHandler
+    @Inject
+    DartHostedUploadHandler uploadHandler
 
-  @Inject
-  DartHostedRecipe(@Named(HostedType.NAME) final Type type, @Named(DartFormat.NAME) final Format format) {
-    super(type, format)
-  }
+    @Inject
+    DartHostedDownloadHandler downloadHandler
 
-  @Override
-  void apply(@Nonnull final Repository repository) throws Exception {
-    repository.attach(storageFacet.get())
-    repository.attach(contentFacet.get())
-    repository.attach(securityFacet.get())
-    repository.attach(configure(viewFacet.get()))
-    repository.attach(componentMaintenanceFacet.get())
-    repository.attach(hostedFacet.get())
-    repository.attach(hostedMetadataFacet.get())
-    repository.attach(searchFacet.get())
-    repository.attach(attributesFacet.get())
-  }
+    @Inject
+    DartHostedRecipe(@Named(HostedType.NAME) final Type type, @Named(DartFormat.NAME) final Format format) {
+        super(type, format)
+    }
 
-  /**
-   * Configure {@link ViewFacet}.
-   */
-  private ViewFacet configure(final ConfigurableViewFacet facet) {
-    Router.Builder builder = new Router.Builder()
+    @Override
+    void apply(@Nonnull final Repository repository) throws Exception {
+        repository.attach(storageFacet.get())
+        repository.attach(contentFacet.get())
+        repository.attach(securityFacet.get())
+        repository.attach(configure(viewFacet.get()))
+        repository.attach(componentMaintenanceFacet.get())
+        repository.attach(hostedFacet.get())
+        repository.attach(hostedMetadataFacet.get())
+        repository.attach(searchFacet.get())
+        repository.attach(attributesFacet.get())
+    }
 
-    builder.route(packagesMatcher()
-        .handler(timingHandler)
-        .handler(assetKindHandler.rcurry(AssetKind.PACKAGES_METADATA))
-        .handler(securityHandler)
-        .handler(exceptionHandler)
-        .handler(handlerContributor)
-        .handler(conditionalRequestHandler)
-        .handler(partialFetchHandler)
-        .handler(contentHeadersHandler)
-        .handler(unitOfWorkHandler)
-        .handler(downloadHandler)
-        .create())
+    /**
+     * Configure {@link ViewFacet}.
+     */
+    private ViewFacet configure(final ConfigurableViewFacet facet) {
+        Router.Builder builder = new Router.Builder()
 
-    builder.route(packageMatcher()
-        .handler(timingHandler)
-        .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_METADATA))
-        .handler(securityHandler)
-        .handler(exceptionHandler)
-        .handler(handlerContributor)
-        .handler(conditionalRequestHandler)
-        .handler(partialFetchHandler)
-        .handler(contentHeadersHandler)
-        .handler(unitOfWorkHandler)
-        .handler(downloadHandler)
-        .create())
+        builder.route(packagesMatcher()
+                .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.PACKAGES_METADATA))
+                .handler(securityHandler)
+                .handler(exceptionHandler)
+                .handler(handlerContributor)
+                .handler(conditionalRequestHandler)
+                .handler(partialFetchHandler)
+                .handler(contentHeadersHandler)
+                .handler(unitOfWorkHandler)
+                .handler(downloadHandler)
+                .create())
 
-    builder.route(versionMatcher()
-        .handler(timingHandler)
-        .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_VERSION_METADATA))
-        .handler(securityHandler)
-        .handler(exceptionHandler)
-        .handler(handlerContributor)
-        .handler(conditionalRequestHandler)
-        .handler(partialFetchHandler)
-        .handler(contentHeadersHandler)
-        .handler(unitOfWorkHandler)
-        .handler(downloadHandler)
-        .create())
+        builder.route(packageMatcher()
+                .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_METADATA))
+                .handler(securityHandler)
+                .handler(exceptionHandler)
+                .handler(handlerContributor)
+                .handler(conditionalRequestHandler)
+                .handler(partialFetchHandler)
+                .handler(contentHeadersHandler)
+                .handler(unitOfWorkHandler)
+                .handler(downloadHandler)
+                .create())
 
-    builder.route(archiveMatcher()
-        .handler(timingHandler)
-        .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_ARCHIVE))
-        .handler(securityHandler)
-        .handler(exceptionHandler)
-        .handler(handlerContributor)
-        .handler(conditionalRequestHandler)
-        .handler(partialFetchHandler)
-        .handler(contentHeadersHandler)
-        .handler(unitOfWorkHandler)
-        .handler(uploadHandler)
-        .create())
+        builder.route(versionMatcher()
+                .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_VERSION_METADATA))
+                .handler(securityHandler)
+                .handler(exceptionHandler)
+                .handler(handlerContributor)
+                .handler(conditionalRequestHandler)
+                .handler(partialFetchHandler)
+                .handler(contentHeadersHandler)
+                .handler(unitOfWorkHandler)
+                .handler(downloadHandler)
+                .create())
 
-    addBrowseUnsupportedRoute(builder)
+        builder.route(archiveMatcher()
+                .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_ARCHIVE))
+                .handler(securityHandler)
+                .handler(exceptionHandler)
+                .handler(handlerContributor)
+                .handler(conditionalRequestHandler)
+                .handler(partialFetchHandler)
+                .handler(contentHeadersHandler)
+                .handler(unitOfWorkHandler)
+                .handler(uploadHandler)
+                .create())
 
-    builder.defaultHandlers(HttpHandlers.notFound())
+        addBrowseUnsupportedRoute(builder)
 
-    facet.configure(builder.create())
+        builder.defaultHandlers(HttpHandlers.notFound())
 
-    return facet
-  }
+        facet.configure(builder.create())
+
+        return facet
+    }
 }
