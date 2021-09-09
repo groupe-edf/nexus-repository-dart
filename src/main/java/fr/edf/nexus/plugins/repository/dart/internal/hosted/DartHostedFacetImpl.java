@@ -81,6 +81,18 @@ public class DartHostedFacetImpl extends FacetSupport implements DartHostedFacet
         return null;
     }
 
+    @Override
+    @TransactionalTouchMetadata
+    public void rebuildPackagesMetadatas() throws IOException {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    @TransactionalTouchMetadata
+    public void rebuildPackageMetadatas() throws IOException {
+        // TODO Auto-generated method stub
+    }
+
     @VisibleForTesting
     protected Query buildQuery(final String vendor, final String project) {
         return Query.builder().where(P_GROUP).eq(vendor).and(P_NAME).eq(project).build();
