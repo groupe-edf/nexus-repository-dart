@@ -12,32 +12,31 @@
  */
 package fr.edf.nexus.plugins.repository.dart.internal.hosted;
 
-import java.io.IOException;
-
-import javax.annotation.Nullable;
-
-import org.sonatype.nexus.repository.Facet;
-import org.sonatype.nexus.repository.view.Content;
-import org.sonatype.nexus.repository.view.Payload;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Interface defining the features supported by Dart repository hosted facets.
+ * Event fired when metadata (the provider.json) for a particular vendor/project
+ * in a Composer hosted repository is no longer valid. This happens when an
+ * asset is created, updated, or deleted and the corresponding provider.json
+ * must be rebuilt.
  */
-@Facet.Exposed
-public interface DartHostedFacet extends Facet {
+public class DartHostedMetadataInvalidationEvent {
 
-    void upload(String name, String version, Payload payload) throws IOException;
+    private final String repositoryName;
 
-    Content getPackagesMetadatas() throws IOException;
+    private final String packageName;
 
-    Content getPackageMetadatas(String path) throws IOException;
+    public DartHostedMetadataInvalidationEvent(final String repositoryName, final String packageName) {
+        this.repositoryName = checkNotNull(repositoryName);
+        this.packageName = checkNotNull(packageName);
+    }
 
-    Content getPackageVersionMetadatas(String path) throws IOException;
+    public String getRepositoryName() {
+        return repositoryName;
+    }
 
-    void rebuildPackagesMetadatas() throws IOException;
+    public String getPackageName() {
+        return packageName;
+    }
 
-    void rebuildPackageMetadatas() throws IOException;
-
-    @Nullable
-    Content getArchive(String path) throws IOException;
 }

@@ -12,32 +12,13 @@
  */
 package fr.edf.nexus.plugins.repository.dart.internal.hosted;
 
-import java.io.IOException;
-
-import javax.annotation.Nullable;
-
 import org.sonatype.nexus.repository.Facet;
-import org.sonatype.nexus.repository.view.Content;
-import org.sonatype.nexus.repository.view.Payload;
 
 /**
- * Interface defining the features supported by Dart repository hosted facets.
+ * Tagging interface indicating that a facet is an implementation of a
+ * {@code DartHostedMetadataFacet}. This facet is responsible for maintaining
+ * the internal metadata.
  */
 @Facet.Exposed
-public interface DartHostedFacet extends Facet {
-
-    void upload(String name, String version, Payload payload) throws IOException;
-
-    Content getPackagesMetadatas() throws IOException;
-
-    Content getPackageMetadatas(String path) throws IOException;
-
-    Content getPackageVersionMetadatas(String path) throws IOException;
-
-    void rebuildPackagesMetadatas() throws IOException;
-
-    void rebuildPackageMetadatas() throws IOException;
-
-    @Nullable
-    Content getArchive(String path) throws IOException;
+public interface DartHostedMetadataFacet extends Facet {
 }

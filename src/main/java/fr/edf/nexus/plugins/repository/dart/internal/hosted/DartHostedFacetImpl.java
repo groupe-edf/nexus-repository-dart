@@ -62,14 +62,14 @@ public class DartHostedFacetImpl extends FacetSupport implements DartHostedFacet
 
     @Override
     @TransactionalTouchMetadata
-    public Content getPackageMetadatas(String name) throws IOException {
+    public Content getPackageMetadatas(String path) throws IOException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     @TransactionalTouchMetadata
-    public Content getPackageVersionMetadatas(String name, String version) throws IOException {
+    public Content getPackageVersionMetadatas(String path) throws IOException {
         // TODO Auto-generated method stub
         return null;
     }

@@ -10,7 +10,7 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package fr.edf.nexus.plugins.repository.dart.internal;
+package fr.edf.nexus.plugins.repository.dart.internal.proxy;
 
 import java.io.IOException;
 
@@ -28,6 +28,9 @@ import org.sonatype.nexus.repository.view.Parameters;
 import org.sonatype.nexus.transaction.UnitOfWork;
 
 import com.google.common.annotations.VisibleForTesting;
+
+import fr.edf.nexus.plugins.repository.dart.internal.AssetKind;
+import fr.edf.nexus.plugins.repository.dart.internal.DartFacet;
 
 /**
  * Proxy facet for a Dart repository.
