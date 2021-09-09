@@ -13,9 +13,9 @@
 /*global Ext, NX*/
 
 /**
- * Configuration settings in the UI for a Composer hosted recipe.
+ * Configuration settings in the UI for a Dart hosted recipe.
  */
-Ext.define('NX.composer.view.repository.recipe.DartHosted', {
+Ext.define('NX.dart.view.repository.recipe.DartHosted', {
   extend: 'NX.coreui.view.repository.RepositorySettingsForm',
   alias: 'widget.nx-coreui-repository-dart-hosted',
   requires: [
@@ -32,7 +32,7 @@ Ext.define('NX.composer.view.repository.recipe.DartHosted', {
     me.items = [
       {xtype: 'nx-coreui-repository-storage-facet'},
       {xtype: 'nx-coreui-repository-storage-hosted-facet', writePolicy: 'ALLOW'},
-      {xtype: 'nx-coreui-upload-facet-default'}
+      { xtype: 'nx-coreui-repository-cleanup-policy-facet'}
     ];
 
     me.callParent();
