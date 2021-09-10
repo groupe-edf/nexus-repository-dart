@@ -13,7 +13,6 @@
 package fr.edf.nexus.plugins.repository.dart.internal;
 
 import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,16 +44,6 @@ import org.sonatype.nexus.repository.view.PartPayload;
  */
 public abstract class DartUploadHandlerSupport extends UploadHandlerSupport {
 
-    protected static final String NAME = "name";
-
-    protected static final String VERSION = "version";
-
-    protected static final String NAME_HELP_TEXT = "Name of the library";
-
-    protected static final String VERSION_HELP_TEXT = "Version of the library";
-
-    protected static final String FIELD_GROUP_NAME = "Component attributes";
-
     protected final ContentPermissionChecker contentPermissionChecker;
 
     protected final VariableResolverAdapter variableResolverAdapter;
@@ -75,7 +64,9 @@ public abstract class DartUploadHandlerSupport extends UploadHandlerSupport {
         Map<String, PartPayload> pathToPayload = new LinkedHashMap<>();
 
         for (AssetUpload asset : upload.getAssetUploads()) {
-            String path = normalizePath(upload.getFields().get(NAME).trim());
+            String path = normalizePath(DartAttributes.PACKAGES_PATH + "/" + asset.getField(DartAttributes.NAME).trim()
+                    + "/" + DartAttributes.VERSIONS_PATH + "/" + asset.getField(DartAttributes.VERSION).trim()
+                    + DartAttributes.EXTENSION);
 
             ensurePermitted(repository.getName(), DartFormat.NAME, path, emptyMap());
 
@@ -124,11 +115,13 @@ public abstract class DartUploadHandlerSupport extends UploadHandlerSupport {
     @Override
     public UploadDefinition getDefinition() {
         if (definition == null) {
-            definition = getDefinition(DartFormat.NAME, false,
-                    singletonList(
-                            new UploadFieldDefinition(NAME, NAME_HELP_TEXT, false, Type.STRING, FIELD_GROUP_NAME)),
-                    singletonList(new UploadFieldDefinition(VERSION, VERSION_HELP_TEXT, false, Type.STRING)),
-                    new UploadRegexMap("(.*)", VERSION));
+            UploadFieldDefinition name = new UploadFieldDefinition(DartAttributes.NAME, false, Type.STRING);
+            UploadFieldDefinition version = new UploadFieldDefinition(DartAttributes.VERSION, false, Type.STRING);
+            List<UploadFieldDefinition> fieldList = new ArrayList<>();
+            fieldList.add(name);
+            fieldList.add(version);
+            definition = getDefinition(DartFormat.NAME, false, new ArrayList<UploadFieldDefinition>(), fieldList,
+                    new UploadRegexMap("(.*)", DartAttributes.VERSION));
         }
         return definition;
     }

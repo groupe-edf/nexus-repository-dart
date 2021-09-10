@@ -97,7 +97,7 @@ public class DartHostedMetadataFacetImpl extends FacetSupport implements DartHos
 
     private void invalidateMetadata(final AssetEvent assetEvent) {
         Asset asset = assetEvent.getAsset();
-        String name = asset.formatAttributes().require(DartAttributes.PACKAGE_NAME, String.class);
+        String name = asset.formatAttributes().require(DartAttributes.NAME, String.class);
         eventManager.post(new DartHostedMetadataInvalidationEvent(getRepository().getName(), name));
     }
 

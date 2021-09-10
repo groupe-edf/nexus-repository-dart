@@ -127,7 +127,7 @@ public class DartFacetImpl extends FacetSupport implements DartFacet {
             throws IOException {
         String[] parts = path.split("/");
         String name = parts[1];
-        String version = parts[3].split(".tar.gz")[0];
+        String version = parts[3].split(DartAttributes.EXTENSION)[0];
 
         StorageTx tx = UnitOfWork.currentTx();
 
