@@ -14,8 +14,6 @@ package fr.edf.nexus.plugins.repository.dart.internal;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.Map;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -29,9 +27,10 @@ import org.apache.commons.compress.compressors.CompressorStreamFactory;
 import org.sonatype.goodies.common.ComponentSupport;
 import org.sonatype.nexus.repository.view.Payload;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
+import fr.edf.nexus.plugins.repository.dart.internal.model.Pubspec;
 
 /**
  * Utility class for extracting pubspec.yaml file's datas from a Dart package
@@ -40,39 +39,36 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 @Named
 @Singleton
 public class DartPubspecExtractor extends ComponentSupport {
-    private final TypeReference<Map<String, Object>> typeReference = new TypeReference<Map<String, Object>>() {
-    };
 
     private final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 
     private final ArchiveStreamFactory archiveStreamFactory = new ArchiveStreamFactory();
     private final CompressorStreamFactory compressorStreamFactory = new CompressorStreamFactory();
 
-    public Map<String, Object> extractPubspec(final Payload payload) throws IOException {
+    public Pubspec extractPubspec(final Payload payload) throws IOException {
         try (InputStream is = payload.openInputStream()) {
             try (ArchiveInputStream ais = archiveStreamFactory.createArchiveInputStream(ArchiveStreamFactory.TAR,
                     compressorStreamFactory.createCompressorInputStream(CompressorStreamFactory.GZIP, is))) {
                 ArchiveEntry entry = ais.getNextEntry();
                 while (entry != null) {
-                    Map<String, Object> contents = processEntry(ais, entry);
-                    if (!contents.isEmpty()) {
-                        return contents;
+                    Pubspec pubspec = processEntry(ais, entry);
+                    if (pubspec != null) {
+                        return pubspec;
                     }
                     entry = ais.getNextEntry();
                 }
             }
-            return Collections.emptyMap();
+            throw new IOException("No pubspec file found in the archive");
         } catch (ArchiveException | CompressorException e) {
             throw new IOException("Error reading from archive", e);
         }
     }
 
-    private Map<String, Object> processEntry(final ArchiveInputStream stream, final ArchiveEntry entry)
-            throws IOException {
+    private Pubspec processEntry(final ArchiveInputStream stream, final ArchiveEntry entry) throws IOException {
         if (isPubspec(entry.getName())) {
-            return mapper.readValue(stream, typeReference);
+            return mapper.readValue(stream, Pubspec.class);
         }
-        return Collections.emptyMap();
+        return null;
     }
 
     private boolean isPubspec(final String entryName) {

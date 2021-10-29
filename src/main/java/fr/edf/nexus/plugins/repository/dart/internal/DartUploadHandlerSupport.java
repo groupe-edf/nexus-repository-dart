@@ -16,10 +16,9 @@ import static java.util.Collections.emptyMap;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.sonatype.nexus.repository.Repository;
 import org.sonatype.nexus.repository.rest.UploadDefinitionExtension;
@@ -34,8 +33,9 @@ import org.sonatype.nexus.repository.upload.UploadHandlerSupport;
 import org.sonatype.nexus.repository.upload.UploadRegexMap;
 import org.sonatype.nexus.repository.upload.UploadResponse;
 import org.sonatype.nexus.repository.view.Content;
-import org.sonatype.nexus.repository.view.PartPayload;
-import org.sonatype.nexus.repository.view.Payload;
+
+import fr.edf.nexus.plugins.repository.dart.internal.model.DartComponentUpload;
+import fr.edf.nexus.plugins.repository.dart.internal.model.Pubspec;
 
 /**
  * Common base for dart upload handlers
@@ -60,7 +60,7 @@ public abstract class DartUploadHandlerSupport extends UploadHandlerSupport {
     @Override
     public UploadResponse handle(final Repository repository, final ComponentUpload upload) throws IOException {
         // Data holders for populating the UploadResponse
-        Map<String, PartPayload> pathToPayload = new LinkedHashMap<>();
+        List<DartComponentUpload> componentsUpload = new ArrayList<>();
 
         for (AssetUpload asset : upload.getAssetUploads()) {
             String path = normalizePath(DartAttributes.PACKAGES_PATH + "/" + asset.getField(DartAttributes.NAME).trim()
@@ -69,17 +69,18 @@ public abstract class DartUploadHandlerSupport extends UploadHandlerSupport {
 
             ensurePermitted(repository.getName(), DartFormat.NAME, path, emptyMap());
             DartPubspecExtractor extractor = new DartPubspecExtractor();
-            extractor.extractPubspec(asset.getPayload());
-            pathToPayload.put(path, asset.getPayload());
+            Pubspec pubspec = extractor.extractPubspec(asset.getPayload());
+            componentsUpload.add(new DartComponentUpload(path, asset.getPayload(), pubspec));
         }
 
-        List<Content> responseContents = getResponseContents(repository, pathToPayload);
+        List<Content> responseContents = getResponseContents(repository, componentsUpload);
 
-        return new UploadResponse(responseContents, new ArrayList<>(pathToPayload.keySet()));
+        return new UploadResponse(responseContents,
+                componentsUpload.stream().map(DartComponentUpload::getPath).collect(Collectors.toList()));
     }
 
     protected abstract List<Content> getResponseContents(final Repository repository,
-            final Map<String, PartPayload> pathToPayload) throws IOException;
+            final List<DartComponentUpload> componentsUpload) throws IOException;
 
     protected String normalizePath(final String path) {
         String result = path.replaceAll("/+", "/");
