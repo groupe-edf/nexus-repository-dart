@@ -52,11 +52,6 @@ public class DartUploadHandler extends DartUploadHandlerSupport {
     }
 
     @Override
-    protected Content doPut(final ImportFileConfiguration configuration) throws IOException {
-        return null;
-    }
-
-    @Override
     protected String normalizePath(final String path) {
         return "/" + super.normalizePath(path);
     }

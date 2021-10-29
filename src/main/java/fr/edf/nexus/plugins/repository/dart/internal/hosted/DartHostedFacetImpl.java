@@ -30,6 +30,7 @@ import org.sonatype.nexus.repository.view.Payload;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import fr.edf.nexus.plugins.repository.dart.internal.AssetKind;
 import fr.edf.nexus.plugins.repository.dart.internal.DartFacet;
 import fr.edf.nexus.plugins.repository.dart.internal.DartJsonProcessor;
 
@@ -48,8 +49,8 @@ public class DartHostedFacetImpl extends FacetSupport implements DartHostedFacet
 
     @Override
     @TransactionalStoreBlob
-    public void upload(String name, String version, Payload payload) throws IOException {
-        // TODO Auto-generated method stub
+    public Content upload(String path, Payload payload) throws IOException {
+        return content().put(path, payload, AssetKind.PACKAGE_ARCHIVE);
 
     }
 

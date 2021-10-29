@@ -14,7 +14,6 @@ package fr.edf.nexus.plugins.repository.dart.internal;
 
 import static java.util.Collections.emptyMap;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.sonatype.nexus.repository.Repository;
-import org.sonatype.nexus.repository.importtask.ImportFileConfiguration;
 import org.sonatype.nexus.repository.rest.UploadDefinitionExtension;
 import org.sonatype.nexus.repository.security.ContentPermissionChecker;
 import org.sonatype.nexus.repository.security.VariableResolverAdapter;
@@ -37,6 +35,7 @@ import org.sonatype.nexus.repository.upload.UploadRegexMap;
 import org.sonatype.nexus.repository.upload.UploadResponse;
 import org.sonatype.nexus.repository.view.Content;
 import org.sonatype.nexus.repository.view.PartPayload;
+import org.sonatype.nexus.repository.view.Payload;
 
 /**
  * Common base for dart upload handlers
@@ -69,7 +68,8 @@ public abstract class DartUploadHandlerSupport extends UploadHandlerSupport {
                     + DartAttributes.EXTENSION);
 
             ensurePermitted(repository.getName(), DartFormat.NAME, path, emptyMap());
-
+            DartPubspecExtractor extractor = new DartPubspecExtractor();
+            extractor.extractPubspec(asset.getPayload());
             pathToPayload.put(path, asset.getPayload());
         }
 
@@ -80,23 +80,6 @@ public abstract class DartUploadHandlerSupport extends UploadHandlerSupport {
 
     protected abstract List<Content> getResponseContents(final Repository repository,
             final Map<String, PartPayload> pathToPayload) throws IOException;
-
-    @Override
-    public Content handle(final Repository repository, final File content, final String path) throws IOException {
-        // TODO: Remove this handler once all formats have been converted to work with
-        // ImportFileConfiguration
-        return handle(new ImportFileConfiguration(repository, content, path));
-    }
-
-    @Override
-    public Content handle(final ImportFileConfiguration configuration) throws IOException {
-        ensurePermitted(configuration.getRepository().getName(), DartFormat.NAME, configuration.getAssetName(),
-                emptyMap());
-
-        return doPut(configuration);
-    }
-
-    protected abstract Content doPut(final ImportFileConfiguration configuration) throws IOException;
 
     protected String normalizePath(final String path) {
         String result = path.replaceAll("/+", "/");

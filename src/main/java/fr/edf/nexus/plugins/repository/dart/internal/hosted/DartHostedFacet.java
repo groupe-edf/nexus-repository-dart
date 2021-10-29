@@ -26,7 +26,7 @@ import org.sonatype.nexus.repository.view.Payload;
 @Facet.Exposed
 public interface DartHostedFacet extends Facet {
 
-    void upload(String name, String version, Payload payload) throws IOException;
+    Content upload(String path, Payload payload) throws IOException;
 
     Content getPackagesMetadatas() throws IOException;
 
