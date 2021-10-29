@@ -155,4 +155,26 @@ abstract class DartRecipeSupport extends RecipeSupport {
                 new TokenMatcher('/packages/{package:.+}/versions/{version:.+}.tar.gz')
                 ))
     }
+
+    static Builder uploadMatcher() {
+        new Builder().matcher(
+                LogicMatchers.and(
+                new ActionMatcher(HttpMethods.GET),
+                new TokenMatcher('/api/packages/versions/new')
+                ))
+    }
+
+    /**
+     * Route matcher for flutter infra api
+     *
+     * @return Route {@link Builder} of this matcher
+     */
+    // TODO : for flutter upload or other flutter tools
+    //    static Builder flutterInfraMatcher() {
+    //        new Builder().matcher(
+    //                LogicMatchers.and(
+    //                        new ActionMatcher(HttpMethods.GET),
+    //                        new TokenMatcher('/flutter_infra_release/flutter/f0826da7ef2d301eb8f4ead91aaf026aa2b52881/sky_engine.zip')
+    //                        ))
+    //    }
 }
