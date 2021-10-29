@@ -15,7 +15,6 @@ package fr.edf.nexus.plugins.repository.dart.internal;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -27,7 +26,8 @@ import org.sonatype.nexus.repository.rest.UploadDefinitionExtension;
 import org.sonatype.nexus.repository.security.ContentPermissionChecker;
 import org.sonatype.nexus.repository.security.VariableResolverAdapter;
 import org.sonatype.nexus.repository.view.Content;
-import org.sonatype.nexus.repository.view.PartPayload;
+
+import fr.edf.nexus.plugins.repository.dart.internal.model.DartComponentUpload;
 
 /**
  * Support for uploading dart components via UI & API
@@ -46,7 +46,7 @@ public class DartUploadHandler extends DartUploadHandlerSupport {
 
     @Override
     protected List<Content> getResponseContents(final Repository repository,
-            final Map<String, PartPayload> pathToPayload) throws IOException {
+            final List<DartComponentUpload> componentsUpload) throws IOException {
         return new ArrayList<>();
     }
 
