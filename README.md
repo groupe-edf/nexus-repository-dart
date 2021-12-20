@@ -105,6 +105,10 @@ C:\WORKSPACES\dart_test\dart_test_project>flutter doctor -v
 
 Now, the downloads of Dart packages will works with the Nexus Dart Proxy repository.
 
+## Troubleshooting
+"flutter updtate" command is not working when nexus repository dart is setted. It can break your installation and need a complete reinstall of flutter on your computer.
+To avoid this, environment variables `PUB_HOSTED_URL` and `FLUTTER_STORAGE_BASE_URL` must be unset before launching "flutter update".
+
 ## Team
 
 Product Owner: [Cloudehard](https://github.com/Cloudehard)
