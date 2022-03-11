@@ -31,6 +31,14 @@ Nexus plugin to configure Dart repositories
 
 This plugin has been tested on the version 3.31.0-01 and 3.31.1-01 but it may works with others versions.
 
+## Compatibility Matrix
+
+| Plugin version | Nexus repository version     |
+|----------------|------------------------------|
+| v1.0.0         | less than 3.38               |
+| v1.0.1         | less than 3.38               |
+| v1.1.0         | Up to 3.38                   |
+
 ## Developing
 
 There is goods informations about developing bundle for Nexus 3 at [Bundle Development](https://help.sonatype.com/display/NXRM3/Bundle+Development)
