@@ -24,7 +24,7 @@ import org.sonatype.nexus.repository.Type
 import org.sonatype.nexus.repository.attributes.AttributesFacet
 import org.sonatype.nexus.repository.http.HttpMethods
 import org.sonatype.nexus.repository.http.PartialFetchHandler
-import org.sonatype.nexus.repository.search.SearchFacet
+import org.sonatype.nexus.repository.search.ElasticSearchFacet
 import org.sonatype.nexus.repository.security.SecurityHandler
 import org.sonatype.nexus.repository.storage.SingleAssetComponentMaintenance
 import org.sonatype.nexus.repository.storage.StorageFacet
@@ -60,7 +60,7 @@ abstract class DartRecipeSupport extends RecipeSupport {
     Provider<StorageFacet> storageFacet
 
     @Inject
-    Provider<SearchFacet> searchFacet
+    Provider<ElasticSearchFacet> searchFacet
 
     @Inject
     Provider<AttributesFacet> attributesFacet
