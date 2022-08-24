@@ -31,6 +31,14 @@ Nexus plugin to configure Dart repositories
 
 This plugin has been tested on the version 3.31.0-01 and 3.31.1-01 but it may works with others versions.
 
+## Compatibility Matrix
+
+| Plugin version | Nexus repository version     |
+|----------------|------------------------------|
+| v1.0.0         | < 3.38                       |
+| v1.0.1         | < 3.38                       |
+| v1.1.0         | >= 3.38                      |
+
 ## Developing
 
 There is goods informations about developing bundle for Nexus 3 at [Bundle Development](https://help.sonatype.com/display/NXRM3/Bundle+Development)
@@ -104,6 +112,10 @@ C:\WORKSPACES\dart_test\dart_test_project>flutter doctor -v
 ```
 
 Now, the downloads of Dart packages will works with the Nexus Dart Proxy repository.
+
+## Troubleshooting
+"flutter updtate" command is not working when nexus repository dart is setted. It can break your installation and need a complete reinstall of flutter on your computer.
+To avoid this, environment variables `PUB_HOSTED_URL` and `FLUTTER_STORAGE_BASE_URL` must be unset before launching "flutter update".
 
 ## Team
 
