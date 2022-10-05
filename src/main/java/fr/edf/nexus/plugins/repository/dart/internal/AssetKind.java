@@ -12,6 +12,7 @@ import org.sonatype.nexus.repository.cache.CacheControllerHolder.CacheType;
  */
 public enum AssetKind {
 
+    TARBALL(CacheControllerHolder.CONTENT),
     PACKAGES_METADATA(CacheControllerHolder.METADATA),
     PACKAGE_METADATA(CacheControllerHolder.METADATA),
     PACKAGE_VERSION_METADATA(CacheControllerHolder.METADATA),

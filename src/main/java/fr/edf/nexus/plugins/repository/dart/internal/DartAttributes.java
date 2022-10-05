@@ -14,4 +14,9 @@ public class DartAttributes {
 
     public static final String VERSIONS_PATH = "versions";
 
+    public static final String PUBLISH_PATH = "new";
+
+    public static final String UPLOAD_MULTIPART_PATH = "multipart";
+
+    public static final String FINALIZE_UPLOAD_PATH = "finalize";
 }

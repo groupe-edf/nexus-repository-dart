@@ -156,12 +156,52 @@ abstract class DartRecipeSupport extends RecipeSupport {
                 ))
     }
 
-    static Builder uploadMatcher() {
+    /**
+     * Route matcher ask an upload of a Dart package 
+     * on a hosted repository with Dart or Flutter commandline
+     * 
+     * @see <a href="https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#publishing-packages">Hosted Pub Repository Specification Version 2</a>
+     * 
+     * @return Route {@link Builder} of this matcher
+     */
+    static Builder publishMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
                 new ActionMatcher(HttpMethods.GET),
                 new TokenMatcher('/api/packages/versions/new')
                 ))
+    }
+
+    /**
+     * Route matcher to upload a Dart package on a hosted repository
+     * with Dart or Flutter commandline
+     *
+     * @see <a href="https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#publishing-packages">Hosted Pub Repository Specification Version 2</a>
+     *
+     * @return Route {@link Builder} of this matcher
+     */
+    static Builder multipartUploadMatcher() {
+        new Builder().matcher(
+                LogicMatchers.and(
+                new ActionMatcher(HttpMethods.POST),
+                new TokenMatcher('/api/{package:.+}/versions/{version:.+}/multipart')
+                ))
+    }
+
+    /**
+     * Route matcher to finalize an upload of a Dart package on a hosted repository
+     * with Dart or Flutter commandline
+     *
+     * @see <a href="https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md#publishing-packages">Hosted Pub Repository Specification Version 2</a>
+     *
+     * @return Route {@link Builder} of this matcher
+     */
+    static Builder finalizeUploadMatcher() {
+        new Builder().matcher(
+                LogicMatchers.and(
+                        new ActionMatcher(HttpMethods.GET),
+                        new TokenMatcher('/api/{package:.+}/versions/{version:.+}/finalize')
+                        ))
     }
 
     /**

@@ -30,6 +30,7 @@ import org.sonatype.nexus.repository.view.ViewFacet
 import fr.edf.nexus.plugins.repository.dart.internal.AssetKind
 import fr.edf.nexus.plugins.repository.dart.internal.DartFormat
 import fr.edf.nexus.plugins.repository.dart.internal.DartRecipeSupport
+import fr.edf.nexus.plugins.repository.dart.internal.DartUploadHandler
 import fr.edf.nexus.plugins.repository.dart.internal.recipe.DartHostedRecipe
 
 /**
@@ -47,6 +48,9 @@ class DartHostedRecipeImpl extends DartRecipeSupport implements DartHostedRecipe
 
     @Inject
     DartHostedDownloadHandler downloadHandler
+
+    @Inject
+    DartUploadHandler uploadHandler
 
     @Inject
     DartHostedRecipeImpl(@Named(HostedType.NAME) final Type type, @Named(DartFormat.NAME) final Format format) {
@@ -123,9 +127,8 @@ class DartHostedRecipeImpl extends DartRecipeSupport implements DartHostedRecipe
                 .handler(unitOfWorkHandler)
                 .create())
 
-        builder.route(uploadMatcher()
+        builder.route(publishMatcher()
                 .handler(timingHandler)
-                .handler(assetKindHandler.rcurry(AssetKind.PACKAGE_ARCHIVE))
                 .handler(securityHandler)
                 .handler(exceptionHandler)
                 .handler(handlerContributor)
@@ -133,6 +136,32 @@ class DartHostedRecipeImpl extends DartRecipeSupport implements DartHostedRecipe
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
                 .handler(unitOfWorkHandler)
+                .handler(uploadHandler)
+                .create())
+
+        builder.route(multipartUploadMatcher()
+                .handler(timingHandler)
+                .handler(assetKindHandler.rcurry(AssetKind.TARBALL))
+                .handler(securityHandler)
+                .handler(exceptionHandler)
+                .handler(handlerContributor)
+                .handler(conditionalRequestHandler)
+                .handler(partialFetchHandler)
+                .handler(contentHeadersHandler)
+                .handler(unitOfWorkHandler)
+                .handler(uploadHandler)
+                .create())
+
+        builder.route(finalizeUploadMatcher()
+                .handler(timingHandler)
+                .handler(securityHandler)
+                .handler(exceptionHandler)
+                .handler(handlerContributor)
+                .handler(conditionalRequestHandler)
+                .handler(partialFetchHandler)
+                .handler(contentHeadersHandler)
+                .handler(unitOfWorkHandler)
+                .handler(uploadHandler)
                 .create())
 
         addBrowseUnsupportedRoute(builder)
