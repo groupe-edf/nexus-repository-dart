@@ -184,7 +184,7 @@ abstract class DartRecipeSupport extends RecipeSupport {
         new Builder().matcher(
                 LogicMatchers.and(
                 new ActionMatcher(HttpMethods.POST),
-                new TokenMatcher('/api/{package:.+}/versions/{version:.+}/multipart')
+                new TokenMatcher('/api/{id:.+}/multipart')
                 ))
     }
 
