@@ -30,7 +30,6 @@ import org.sonatype.nexus.repository.view.ViewFacet
 import fr.edf.nexus.plugins.repository.dart.internal.AssetKind
 import fr.edf.nexus.plugins.repository.dart.internal.DartFormat
 import fr.edf.nexus.plugins.repository.dart.internal.DartRecipeSupport
-import fr.edf.nexus.plugins.repository.dart.internal.DartUploadHandler
 import fr.edf.nexus.plugins.repository.dart.internal.recipe.DartHostedRecipe
 
 /**
@@ -50,7 +49,7 @@ class DartHostedRecipeImpl extends DartRecipeSupport implements DartHostedRecipe
     DartHostedDownloadHandler downloadHandler
 
     @Inject
-    DartUploadHandler uploadHandler
+    DartHostedUploadHandler uploadHandler
 
     @Inject
     DartHostedRecipeImpl(@Named(HostedType.NAME) final Type type, @Named(DartFormat.NAME) final Format format) {
