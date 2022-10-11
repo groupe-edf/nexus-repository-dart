@@ -14,6 +14,7 @@ package fr.edf.nexus.plugins.repository.dart.internal
 
 import static org.sonatype.nexus.repository.http.HttpMethods.GET
 import static org.sonatype.nexus.repository.http.HttpMethods.HEAD
+import static org.sonatype.nexus.repository.http.HttpMethods.POST
 
 import javax.inject.Inject
 import javax.inject.Provider
@@ -151,7 +152,7 @@ abstract class DartRecipeSupport extends RecipeSupport {
     static Builder archiveMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
-                new ActionMatcher(HttpMethods.GET),
+                new ActionMatcher(GET, HEAD),
                 new TokenMatcher('/packages/{package:.+}/versions/{version:.+}.tar.gz')
                 ))
     }
@@ -167,8 +168,8 @@ abstract class DartRecipeSupport extends RecipeSupport {
     static Builder publishMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
-                new ActionMatcher(HttpMethods.GET),
-                new TokenMatcher('/api/packages/versions/new')
+                new ActionMatcher(GET, HEAD),
+                new LiteralMatcher('/api/packages/versions/new')
                 ))
     }
 
@@ -183,7 +184,7 @@ abstract class DartRecipeSupport extends RecipeSupport {
     static Builder multipartUploadMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
-                new ActionMatcher(HttpMethods.POST),
+                new ActionMatcher(POST),
                 new TokenMatcher('/api/{id:.+}/multipart')
                 ))
     }
@@ -199,7 +200,7 @@ abstract class DartRecipeSupport extends RecipeSupport {
     static Builder finalizeUploadMatcher() {
         new Builder().matcher(
                 LogicMatchers.and(
-                        new ActionMatcher(HttpMethods.GET),
+                        new ActionMatcher(GET, HEAD),
                         new TokenMatcher('/api/{package:.+}/versions/{version:.+}/finalize')
                         ))
     }

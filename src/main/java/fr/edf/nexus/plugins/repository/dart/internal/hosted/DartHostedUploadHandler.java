@@ -56,16 +56,16 @@ public class DartHostedUploadHandler implements Handler {
     public Response handle(@Nonnull final Context context) throws Exception {
         Request request = context.getRequest();
         String completePath = request.getPath();
-        String path = completePath.substring(completePath.lastIndexOf('/'), completePath.length());
+        String path = completePath.substring(completePath.lastIndexOf('/')+1, completePath.length());
         switch (path) {
         case DartAttributes.PUBLISH_PATH:
-            return publish();
+            return publish(context);
         case DartAttributes.UPLOAD_MULTIPART_PATH:
             return uploadMultipart(completePath, context.getRequest().getMultiparts());
         case DartAttributes.FINALIZE_UPLOAD_PATH:
             return finalizeUpload(completePath);
         default:
-            return HttpResponses.badRequest("Route specified not found : " + completePath);
+            return HttpResponses.badRequest("nexus-repository-dart : Route specified not found : " + completePath);
         }
     }
 
@@ -73,13 +73,14 @@ public class DartHostedUploadHandler implements Handler {
      * 
      * @return {@link Response}
      */
-    private Response publish() {
+    private Response publish(@Nonnull final Context context) {
         String uploadId = RandomStringUtils.random(10, true, true);
         uploadIds.add(uploadId);
-        String url = new StringBuilder("/api/").append(uploadId).append("/multipart").toString();
+        String url = new StringBuilder(context.getRepository().getUrl()).append("/api/").append(uploadId).append("/multipart").toString();
         String responseEntity = ""//
                 + "{"//
-                + "\"url\":\"" + url + "\","//
+                + "\"url\":\"" + url + "\","
+                + "\"fields\":{}"//
                 + "}";//
         Payload payload = new StringPayload(responseEntity, PUB_V2_CONTENT_TYPE);
         return new Response.Builder().status(new Status(true, HttpStatus.OK)).payload(payload).build();
