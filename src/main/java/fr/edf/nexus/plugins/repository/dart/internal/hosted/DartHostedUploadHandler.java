@@ -94,7 +94,7 @@ public class DartHostedUploadHandler implements Handler {
      * @throws IOException
      */
     private Response uploadMultipart(String path, final Iterable<PartPayload> multipart) throws IOException {
-        if (!uploadIds.contains(path.split("/")[1])) {
+        if (!uploadIds.contains(path.split("/")[2].trim())) {
             return HttpResponses.forbidden();
         }
         String location = "";
