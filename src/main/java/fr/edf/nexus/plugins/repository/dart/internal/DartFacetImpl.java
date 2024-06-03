@@ -12,6 +12,9 @@
  */
 package fr.edf.nexus.plugins.repository.dart.internal;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static java.util.Collections.singletonList;
 import static org.sonatype.nexus.common.hash.HashAlgorithm.MD5;
 import static org.sonatype.nexus.common.hash.HashAlgorithm.SHA1;
@@ -125,9 +128,15 @@ public class DartFacetImpl extends FacetSupport implements DartFacet {
     protected Content doPutContent(final String path, final TempBlob tempBlob, final Payload payload,
             final AssetKind assetKind, final String sourceType, final String sourceUrl, final String sourceReference)
             throws IOException {
-        String[] parts = path.split("/");
-        String name = parts[1];
-        String version = parts[3].split(DartAttributes.EXTENSION)[0];
+        String regex = ".*/([^/]+)-([^/]+)\\.tar\\.gz";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(path);
+        
+        matcher.matches();
+
+        String name = matcher.group(1);
+        String version = matcher.group(2);
 
         StorageTx tx = UnitOfWork.currentTx();
 
