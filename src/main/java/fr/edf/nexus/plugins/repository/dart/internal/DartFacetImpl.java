@@ -23,6 +23,8 @@ import static org.sonatype.nexus.repository.storage.MetadataNodeEntityAdapter.P_
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -125,9 +127,15 @@ public class DartFacetImpl extends FacetSupport implements DartFacet {
     protected Content doPutContent(final String path, final TempBlob tempBlob, final Payload payload,
             final AssetKind assetKind, final String sourceType, final String sourceUrl, final String sourceReference)
             throws IOException {
-        String[] parts = path.split("/");
-        String name = parts[1];
-        String version = parts[3].split(".tar.gz")[0];
+        String regex = ".*/([^/]+)-([^/]+)\\.tar\\.gz";
+
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(path);
+
+        matcher.matches();
+
+        String name = matcher.group(1);
+        String version = matcher.group(2);
 
         StorageTx tx = UnitOfWork.currentTx();
 
