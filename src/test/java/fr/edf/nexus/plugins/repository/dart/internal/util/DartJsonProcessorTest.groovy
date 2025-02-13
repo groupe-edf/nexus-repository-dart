@@ -1,20 +1,19 @@
-package fr.edf.nexus.plugins.repository.dart.internal;
+package fr.edf.nexus.plugins.repository.dart.internal.util
 
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat
 import static org.hamcrest.core.Is.is
-import static org.junit.Assert.assertArrayEquals
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.when
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-import org.sonatype.goodies.testsupport.TestSupport;
-import org.sonatype.nexus.repository.Repository;
-import org.sonatype.nexus.repository.view.Payload;
+import org.junit.Before
+import org.junit.Test
+import org.mockito.Mock
+import org.sonatype.goodies.testsupport.TestSupport
+import org.sonatype.nexus.repository.Repository
+import org.sonatype.nexus.repository.view.Payload
 
-import groovy.json.JsonSlurper;
+import groovy.json.JsonSlurper
 
-public class DartJsonProcessorTest extends TestSupport {
+class DartJsonProcessorTest extends TestSupport {
 
     static final String DART_PACKAGES_JSON_PATH = "/json/packages.json"
     static final String DART_PACKAGE_JSON_PATH = "/json/hypersnapsdk_flutter-package.json"

@@ -1,6 +1,6 @@
 /*
  * Sonatype Nexus (TM) Open Source Version
- * Copyright (c) 2018-present Sonatype, Inc.
+ * Copyright (c) 2025-present Sonatype, Inc.
  * All rights reserved. Includes the third-party code listed at http://links.sonatype.com/products/nexus/oss/attributions.
  *
  * This program and the accompanying materials are made available under the terms of the Eclipse Public License Version 1.0,
@@ -10,24 +10,24 @@
  * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
  * Eclipse Foundation. All other trademarks are the property of their respective owners.
  */
-package fr.edf.nexus.plugins.repository.dart.internal;
+package fr.edf.nexus.plugins.repository.dart;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.sonatype.nexus.repository.Format;
-import org.sonatype.nexus.repository.security.RepositoryFormatSecurityContributor;
 
 /**
- * Boilerplate security contributor for the Dart format.
+ * Dart repository format.
  */
-@Named
+@Named(DartFormat.NAME)
 @Singleton
-public class DartFormatSecurityContributor extends RepositoryFormatSecurityContributor {
+public class DartFormat
+    extends Format
+{
+  public static final String NAME = "dart";
 
-    @Inject
-    public DartFormatSecurityContributor(@Named(DartFormat.NAME) final Format format) {
-        super(format);
-    }
+  public DartFormat() {
+    super(NAME);
+  }
 }

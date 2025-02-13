@@ -1,6 +1,6 @@
 /*
  * Sonatype Nexus (TM) Open Source Version
- * Copyright (c) 2018-present Sonatype, Inc.
+ * Copyright (c) 2025-present Sonatype, Inc.
  * All rights reserved. Includes the third-party code listed at http://links.sonatype.com/products/nexus/oss/attributions.
  *
  * This program and the accompanying materials are made available under the terms of the Eclipse Public License Version 1.0,
@@ -18,20 +18,15 @@ import javax.inject.Singleton;
 
 import org.sonatype.nexus.rapture.UiPluginDescriptorSupport;
 
-/**
- * Plugin descriptor that registers the plugin-specific UI components (and
- * Javascript) with the repository manager.
- */
 @Named
 @Singleton
 @Priority(Integer.MAX_VALUE - 200)
-@SuppressWarnings("deprecation")
-public class UiPluginDescriptorImpl extends UiPluginDescriptorSupport {
-
-    public UiPluginDescriptorImpl() {
-        super("nexus-repository-dart");
-        setNamespace("NX.dart");
-        setConfigClassName("NX.dart.app.PluginConfig");
-    }
-
+public class UiPluginDescriptorImpl
+    extends UiPluginDescriptorSupport
+{
+  public UiPluginDescriptorImpl() {
+    super("nexus-repository-dart");
+    setNamespace("NX.dart");
+    setConfigClassName("NX.dart.app.PluginConfig");
+  }
 }

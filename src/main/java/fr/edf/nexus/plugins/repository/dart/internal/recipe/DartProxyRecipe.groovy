@@ -1,23 +1,9 @@
-/*
- * Sonatype Nexus (TM) Open Source Version
- * Copyright (c) 2018-present Sonatype, Inc.
- * All rights reserved. Includes the third-party code listed at http://links.sonatype.com/products/nexus/oss/attributions.
- *
- * This program and the accompanying materials are made available under the terms of the Eclipse Public License Version 1.0,
- * which accompanies this distribution and is available at http://www.eclipse.org/legal/epl-v10.html.
- *
- * Sonatype Nexus (TM) Professional Version is available from Sonatype, Inc. "Sonatype" and "Sonatype Nexus" are trademarks
- * of Sonatype, Inc. Apache Maven is a trademark of the Apache Software Foundation. M2eclipse is a trademark of the
- * Eclipse Foundation. All other trademarks are the property of their respective owners.
- */
-package fr.edf.nexus.plugins.repository.dart.internal
+package fr.edf.nexus.plugins.repository.dart.internal.recipe
 
-import javax.annotation.Nonnull
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Provider
-import javax.inject.Singleton
-
+import fr.edf.nexus.plugins.repository.dart.DartFormat
+import fr.edf.nexus.plugins.repository.dart.internal.proxy.DartPackagesHandler
+import fr.edf.nexus.plugins.repository.dart.internal.proxy.DartProxyFacet
+import org.sonatype.nexus.common.upgrade.AvailabilityVersion
 import org.sonatype.nexus.repository.Format
 import org.sonatype.nexus.repository.Repository
 import org.sonatype.nexus.repository.Type
@@ -32,9 +18,13 @@ import org.sonatype.nexus.repository.view.ConfigurableViewFacet
 import org.sonatype.nexus.repository.view.Router
 import org.sonatype.nexus.repository.view.ViewFacet
 
-/**
- * Recipe for creating a Dart proxy repository.
- */
+import javax.annotation.Nonnull
+import javax.inject.Inject
+import javax.inject.Named
+import javax.inject.Provider
+import javax.inject.Singleton
+
+@AvailabilityVersion(from = "1.0")
 @Named(DartProxyRecipe.NAME)
 @Singleton
 class DartProxyRecipe extends DartRecipeSupport {
@@ -42,7 +32,7 @@ class DartProxyRecipe extends DartRecipeSupport {
     public static final String NAME = 'dart-proxy'
 
     @Inject
-    Provider<DartProxyFacetImpl> proxyFacet
+    Provider<DartProxyFacet> proxyFacet
 
     @Inject
     Provider<NegativeCacheFacet> negativeCacheFacet
@@ -75,19 +65,12 @@ class DartProxyRecipe extends DartRecipeSupport {
         repository.attach(httpClientFacet.get())
         repository.attach(negativeCacheFacet.get())
         repository.attach(proxyFacet.get())
-        repository.attach(storageFacet.get())
-        repository.attach(componentMaintenanceFacet.get())
         repository.attach(searchFacet.get())
-        repository.attach(attributesFacet.get())
+        repository.attach(browseFacet.get())
         repository.attach(purgeUnusedFacet.get())
+        repository.attach(maintenanceFacet.get())
     }
 
-    /**
-     * Configure all {@link Route} for Dart APIs
-     * 
-     * @param facet
-     * @return configured {@link ViewFacet}
-     */
     private ViewFacet configure(final ConfigurableViewFacet facet) {
         Router.Builder builder = new Router.Builder()
 
@@ -103,7 +86,6 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
                 .handler(dartPackagesHandler) // Handled to rewrite urls
-                .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
 
@@ -119,7 +101,6 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
                 .handler(dartPackagesHandler) // Handled to rewrite urls
-                .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
 
@@ -135,7 +116,6 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
                 .handler(dartPackagesHandler) // Handled to rewrite urls
-                .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
 
@@ -150,7 +130,6 @@ class DartProxyRecipe extends DartRecipeSupport {
                 .handler(conditionalRequestHandler)
                 .handler(partialFetchHandler)
                 .handler(contentHeadersHandler)
-                .handler(unitOfWorkHandler)
                 .handler(proxyHandler)
                 .create())
 
