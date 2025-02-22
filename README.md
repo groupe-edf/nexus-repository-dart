@@ -27,9 +27,10 @@ Nexus plugin to configure Dart repositories
 
 ## Requirements
 
-- Nexus Repository Manager up to 3.31.0-01
+- Java 17
+- Nexus Repository Manager
 
-This plugin has been tested on the version 3.31.0-01 and 3.31.1-01 but it may works with others versions.
+This plugin has been tested on the version 3.31.0-01 and 3.31.1-01 but it may work with others versions.
 
 ## Compatibility Matrix
 
@@ -37,7 +38,8 @@ This plugin has been tested on the version 3.31.0-01 and 3.31.1-01 but it may wo
 |----------------|------------------------------|
 | v1.0.0         | < 3.38                       |
 | v1.0.1         | < 3.38                       |
-| v1.1.0         | >= 3.38                      |
+| v1.1.0         | >= 3.38 && < 3.71            |
+| v2.0.0         | >= 3.71                      |
 
 ## Developing
 
