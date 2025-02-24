@@ -1,5 +1,6 @@
 package fr.edf.nexus.plugins.repository.dart.internal.recipe
 
+import fr.edf.nexus.plugins.repository.dart.AssetKind
 import fr.edf.nexus.plugins.repository.dart.DartFormat
 import fr.edf.nexus.plugins.repository.dart.internal.proxy.DartPackagesHandler
 import fr.edf.nexus.plugins.repository.dart.internal.proxy.DartProxyFacet
