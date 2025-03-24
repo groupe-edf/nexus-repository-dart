@@ -1,9 +1,11 @@
-package fr.edf.nexus.plugins.repository.dart.internal.recipe
+package fr.edf.nexus.plugins.repository.dart.internal
 
 import fr.edf.nexus.plugins.repository.dart.AssetKind
 import fr.edf.nexus.plugins.repository.dart.DartFormat
 import fr.edf.nexus.plugins.repository.dart.internal.proxy.DartPackagesHandler
 import fr.edf.nexus.plugins.repository.dart.internal.proxy.DartProxyFacet
+import fr.edf.nexus.plugins.repository.dart.internal.recipe.DartRecipeSupport
+
 import org.sonatype.nexus.common.upgrade.AvailabilityVersion
 import org.sonatype.nexus.repository.Format
 import org.sonatype.nexus.repository.Repository

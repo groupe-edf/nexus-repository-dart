@@ -1,4 +1,4 @@
-package fr.edf.nexus.plugins.repository.dart.internal;
+package fr.edf.nexus.plugins.repository.dart.internal.facet;
 
 import fr.edf.nexus.plugins.repository.dart.AssetKind;
 import fr.edf.nexus.plugins.repository.dart.DartContentFacet;
